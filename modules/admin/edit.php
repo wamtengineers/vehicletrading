@@ -12,6 +12,35 @@ if(!defined("APP_START")) die("No Direct Access");
 </div>
 <form action="admin_manage.php?tab=edit" method="post" enctype="multipart/form-data" name="frmAdd"  class="form-horizontal form-horizontal-left">
 	<input type="hidden" name="id" value="<?php echo $id;?>">
+    <?php
+	$i=0;
+	if( $_SESSION[ "logged_in_admin" ][ "branch_id" ] == 0 ) {
+		?>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 control-label">
+                <label class="form-label" for="branch_id">Branch </label>
+            </div>
+            <div class="col-sm-10">
+                <select name="branch_id" title="Choose Option">
+                    <option value="0">Select Branch</option>
+                    <?php
+                    $res=doquery("Select * from branch order by title",$dblink);
+                    if(numrows($res)>0){
+                        while($rec=dofetch($res)){
+                        ?>
+                        <option value="<?php echo $rec["id"]?>"<?php echo($branch_id==$rec["id"])?"selected":"";?>><?php echo unslash($rec["title"]); ?></option>
+                     	<?php			
+                        }			
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+    </div>
+     <?php
+	}
+	?>
     <div class="form-group">
         <div class="row">
             <div class="col-sm-2 control-label">
@@ -26,7 +55,7 @@ if(!defined("APP_START")) die("No Direct Access");
                         while($rec=dofetch($res)){
                         ?>
                         <option value="<?php echo $rec["id"]?>"<?php echo($admin_type_id==$rec["id"])?"selected":"";?>><?php echo unslash($rec["title"]); ?></option>
-                     <?php			
+                     	<?php			
                         }			
                     }
                     ?>

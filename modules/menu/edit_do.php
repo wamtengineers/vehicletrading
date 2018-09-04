@@ -37,6 +37,10 @@ if(isset($_POST["menu_edit"])){
 		foreach($admin_type_ids as $admin_type_id){
 			doquery( "insert into menu_2_admin_type values('".$id."', '".$admin_type_id."')", $dblink );
 		}
+		doquery("delete from menu_2_branch where menu_id='".$id."'", $dblink);
+		foreach($branch_ids as $branch_id){
+			doquery( "insert into menu_2_branch values('".$id."', '".$branch_id."')", $dblink );
+		}
 		unset($_SESSION["menu_manage"]["edit"]);
 		header('Location: menu_manage.php?tab=list&msg='.url_encode("Sucessfully Updated"));
 		die;
@@ -46,6 +50,8 @@ if(isset($_POST["menu_edit"])){
 			$_SESSION["menu_manage"]["edit"][$key]=$value;
 		if( !isset($_POST["admin_type_ids"]) )
 			$_SESSION["menu_manage"]["edit"]["admin_type_ids"] = array();
+		if( !isset($_POST["branch_ids"]) )
+			$_SESSION["menu_manage"]["edit"]["branch_ids"] = array();
 		header("Location: menu_manage.php?tab=edit&err=".url_encode($err)."&id=$id");
 		die;
 	}
@@ -62,6 +68,13 @@ if(isset($_GET["id"]) && $_GET["id"]!=""){
 		if( numrows( $rs ) > 0 ) {
 			while( $r = dofetch( $rs ) ) {
 				$admin_type_ids[] = $r[ "admin_type_id" ];
+			}
+		}
+		$branch_ids = array();
+		$rs =doquery("select branch_id from menu_2_branch where menu_id='".$id."'", $dblink);
+		if( numrows( $rs ) > 0 ) {
+			while( $r = dofetch( $rs ) ) {
+				$branch_ids[] = $r[ "branch_id" ];
 			}
 		}
 		if(isset($_SESSION["menu_manage"]["edit"]))

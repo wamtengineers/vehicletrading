@@ -5,6 +5,7 @@ if(isset($_SESSION["menu_manage"]["add"])){
 }
 else{
 	$admin_type_ids=array();
+	$branch_ids=array();
 	$title="";
 	$url="";
 	$parentid=0;
@@ -40,6 +41,28 @@ else{
                         ?>
                         <option value="<?php echo $rec["id"]?>"<?php echo in_array($rec["id"], $admin_type_ids)?"selected":"";?>><?php echo unslash($rec["title"]); ?></option>
                      <?php			
+                        }			
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-2 control-label no-padding-right">
+                <label class="form-label" for="branch_id">Branch </label>
+            </div>
+            <div class="col-sm-10">
+                <select name="branch_ids[]" title="Choose Option" multiple="multiple" class="select_multiple">
+                    <option value="0">Select Branch</option>
+                    <?php
+                    $res=doquery("Select * from branch order by title",$dblink);
+                    if(numrows($res)>0){
+                        while($rec=dofetch($res)){
+                        ?>
+                        <option value="<?php echo $rec["id"]?>"<?php echo in_array($rec["id"], $branch_ids)?"selected":"";?>><?php echo unslash($rec["title"]); ?></option>
+                     	<?php			
                         }			
                     }
                     ?>

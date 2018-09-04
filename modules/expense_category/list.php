@@ -47,7 +47,7 @@ if(!empty($q)){
 	<table class="table table-hover list">
     	<thead>
             <tr>
-                <th width="5%">S.No</th>
+                <th width="5%" class="text-center">S.No</th>
                 <th class="text-center" width="5%"><div class="checkbox checkbox-primary">
                     <input type="checkbox" id="select_all" value="0" title="Select All Records">
                     <label for="select_all"></label></div></th>
@@ -65,7 +65,7 @@ if(!empty($q)){
                 while($r=dofetch($rs)){             
                     ?>
                     <tr>
-                        <td><?php echo $sn;?></td>
+                        <td class="text-center"><?php echo $sn;?></td>
                         <td class="text-center"><div class="checkbox margin-t-0 checkbox-primary">
                             <input type="checkbox" name="id[]" id="<?php echo "rec_".$sn?>"  value="<?php echo $r["id"]?>" title="Select Record" />
                             <label for="<?php echo "rec_".$sn?>"></label></div>

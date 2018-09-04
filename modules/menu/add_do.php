@@ -31,6 +31,9 @@ if(isset($_POST["menu_add"])){
 		foreach($admin_type_ids as $admin_type_id){
 			doquery( "insert into menu_2_admin_type values('".$id."', '".$admin_type_id."')", $dblink );
 		}
+		foreach($branch_ids as $branch_id){
+			doquery( "insert into menu_2_branch values('".$id."', '".$branch_id."')", $dblink );
+		}
 		
 		unset($_SESSION["menu_manage"]["add"]);
 		header('Location: menu_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));
@@ -41,6 +44,8 @@ if(isset($_POST["menu_add"])){
 			$_SESSION["menu_manage"]["add"][$key]=$value;
 		if( !isset($_POST["admin_type_ids"]) )
 			$_SESSION["menu_manage"]["add"]["admin_type_ids"] = array();
+		if( !isset($_POST["branch_ids"]) )
+			$_SESSION["menu_manage"]["add"]["branch_ids"] = array();
 		header('Location: menu_manage.php?tab=add&err='.url_encode($err));
 		die;
 	}

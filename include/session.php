@@ -5,4 +5,8 @@ if(!isset($_SESSION["logged_in_admin"])){
 		die;
 	}	
 }
+if(!isset($_SESSION["current_branch_id"])){
+	header("Location: branches.php");
+	die;
+}
 ?>

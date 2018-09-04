@@ -6,7 +6,7 @@ if(isset($_POST["currency_edit"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="Update currency set `title`='".slash($title)."', `symbol`='".slash($symbol)."', `default`='".slash($default)."' where id='".$id."'";
+		$sql="Update currency set `branch_id`='".slash($branch_id)."', `title`='".slash($title)."', `symbol`='".slash($symbol)."' where id='".$id."'";
 		doquery($sql,$dblink);
 		unset($_SESSION["currency_manage"]["edit"]);
 		header('Location: currency_manage.php?tab=list&msg='.url_encode("Sucessfully Updated"));

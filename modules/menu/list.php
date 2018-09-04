@@ -50,9 +50,10 @@ if(!empty($q)){
         		<th class="text-center" width="5%"><div class="checkbox checkbox-primary">
             		<input type="checkbox" id="select_all" value="0" title="Select All Records">
             		<label for="select_all"></label></div></th>
-               	<th width="20%">Title</th>
-               	<th width="20%">Parent</th>
-                <th width="20%">Admin Types</th>  
+               	<th width="15%">Title</th>
+               	<th width="15%">Parent</th>
+                <th width="20%">Admin Types</th> 
+                <th width="20%">Branches</th> 
                 <th width="10%">Target URL</th>
                 <th width="12%">Sort Order</th>
                 <th width="8%" class="round_righttop">Actions</th>
@@ -84,6 +85,18 @@ if(!empty($q)){
 								}
 							}
 							echo implode( ", ", $admin_type );
+							?>
+                        </td>
+                        <td>
+							<?php
+							$branch = array();
+							$rs2 =doquery("select title from menu_2_branch a inner join branch b on a.branch_id=b.id where menu_id='".$r["id"]."'", $dblink);
+							if( numrows( $rs2 ) > 0 ) {
+								while( $r2 = dofetch( $rs2 ) ) {
+									$branch[] = $r2[ "title" ];
+								}
+							}
+							echo implode( ", ", $branch );
 							?>
                         </td>
                			<td><?php echo unslash($r["url"]); ?></td>

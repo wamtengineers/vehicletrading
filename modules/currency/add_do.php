@@ -6,7 +6,7 @@ if(isset($_POST["currency_add"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO currency (title, symbol, `default`) VALUES ('".slash($title)."', '".slash($symbol)."', '".slash($default)."')";
+		$sql="INSERT INTO currency (branch_id, title, symbol) VALUES ('".slash($branch_id)."', '".slash($title)."', '".slash($symbol)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["currency_manage"]["add"]);
 		header('Location: currency_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

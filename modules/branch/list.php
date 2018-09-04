@@ -5,37 +5,25 @@ $extra='';
 $is_search=false;
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
-	$_SESSION["account_manage"]["q"]=$q;
+	$_SESSION["branch_manage"]["q"]=$q;
 }
-if(isset($_SESSION["account_manage"]["q"]))
-	$q=$_SESSION["account_manage"]["q"];
+if(isset($_SESSION["branch_manage"]["q"]))
+	$q=$_SESSION["branch_manage"]["q"];
 else
 	$q="";
 if(!empty($q)){
 	$extra.=" and title like '%".$q."%'";
 	$is_search=true;
 }
-if(isset($_GET["type"])){
-	$type=slash($_GET["type"]);
-	$_SESSION["account"]["list"]["type"]=$type;
-}
-if(isset($_SESSION["account"]["list"]["type"]))
-	$type=$_SESSION["account"]["list"]["type"];
-else
-	$type="";
-if($type!=""){
-	$extra.=" and type='".$type."'";
-	$is_search=true;
-}
 ?>
 <div class="page-header">
-	<h1 class="title">Account</h1>
+	<h1 class="title">Branch</h1>
   	<ol class="breadcrumb">
-    	<li class="active">Manage Accounts</li>
+    	<li class="active">Manage Branch</li>
   	</ol>
   	<div class="right">
     	<div class="btn-group" role="group" aria-label="..."> 
-        	<a href="account_manage.php?tab=add" class="btn btn-light editproject">Add New Account</a> 
+        	<a href="branch_manage.php?tab=add" class="btn btn-light editproject">Add New Branch</a> 
             <a id="topstats" class="btn btn-light" href="#"><i class="fa fa-search"></i></a> 
     	</div> 
     </div> 
@@ -46,18 +34,6 @@ if($type!=""){
         	<form class="form-horizontal" action="" method="get">
                 <div class="col-sm-3">
                   <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" >  
-                </div>
-                <div class="col-sm-3">
-                	<select name="type" id="type" title="Choose Option">
-                        <option value="">Select Account Type</option>
-                        <?php
-						foreach ($account_type as $key=>$value) {
-                            ?>
-                            <option value="<?php echo $key?>"<?php echo ($type!="" && $key==$type)?' selected="selected"':""?>><?php echo $value ?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
                 </div>
                 <div class="col-sm-3 text-left">
                     <input type="button" class="btn btn-danger btn-l reset_search" value="Reset" alt="Reset Record" title="Reset Record" />
@@ -71,20 +47,18 @@ if($type!=""){
 	<table class="table table-hover list">
     	<thead>
             <tr>
-                <th width="5%" class="text-center">S.No</th>
+                <th class="text-center" width="5%">S.No</th>
                 <th class="text-center" width="5%"><div class="checkbox checkbox-primary">
                     <input type="checkbox" id="select_all" value="0" title="Select All Records">
                     <label for="select_all"></label></div></th>
                 <th width="20%">Title</th>
-                <th width="20%">Type</th>
-                <th width="30%">Balance</th>
                 <th width="10%" class="text-center">Status</th>
                 <th width="10%" class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
             <?php 
-            $sql="select * from account where 1 $extra";
+            $sql="select * from branch where 1 $extra order by id";
             $rs=show_page($rows, $pageNum, $sql);
             if(numrows($rs)>0){
                 $sn=1;
@@ -97,10 +71,8 @@ if($type!=""){
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
                         <td><?php echo unslash($r["title"]); ?></td>
-                        <td><?php echo getAccountType(unslash($r["type"])); ?></td>
-                        <td><?php echo curr_format(get_account_balance($r["id"])); ?></td>
                         <td class="text-center">
-                            <a href="account_manage.php?id=<?php echo $r['id'];?>&tab=status&s=<?php echo ($r["status"]==0)?1:0;?>">
+                            <a href="branch_manage.php?id=<?php echo $r['id'];?>&tab=status&s=<?php echo ($r["status"]==0)?1:0;?>">
                                 <?php
                                 if($r["status"]==0){
                                     ?>
@@ -116,8 +88,8 @@ if($type!=""){
                             </a>
                         </td>
                         <td class="text-center">
-                            	<a href="account_manage.php?tab=edit&id=<?php echo $r['id'];?>"><img title="Edit Record" alt="Edit" src="images/edit.png"></a>&nbsp;&nbsp;
-                            	<a onclick="return confirm('Are you sure you want to delete')" href="account_manage.php?id=<?php echo $r['id'];?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
+                            	<a href="branch_manage.php?tab=edit&id=<?php echo $r['id'];?>"><img title="Edit Record" alt="Edit" src="images/edit.png"></a>&nbsp;&nbsp;
+                            	<a onclick="return confirm('Are you sure you want to delete')" href="branch_manage.php?id=<?php echo $r['id'];?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
                         </td>
                     </tr>  
                     <?php 
@@ -125,7 +97,7 @@ if($type!=""){
                 }
                 ?>
                 <tr>
-                    <td colspan="4" class="actions">
+                    <td colspan="3" class="actions">
                         <select name="bulk_action" class="" id="bulk_action" title="Choose Action">
                             <option value="null">Bulk Action</option>
                             <option value="delete">Delete</option>
@@ -134,14 +106,14 @@ if($type!=""){
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
                     </td>
-                    <td colspan="3" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "account", $sql, $pageNum)?></td>
+                    <td colspan="3" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "branch", $sql, $pageNum)?></td>
                 </tr>
                 <?php	
             }
             else{	
                 ?>
                 <tr>
-                    <td colspan="7"  class="no-record">No Result Found</td>
+                    <td colspan="6"  class="no-record">No Result Found</td>
                 </tr>
                 <?php
             }

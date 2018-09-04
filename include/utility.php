@@ -399,6 +399,15 @@ function getAccountType($value){
 		return "Current Assets";
 	}
 }
+function getBranchType($value){
+	global $branch_instances;
+	if( $value > 0 ) {
+		return $branch_instances[ $value ];
+	}
+	else {
+		return "All Branch";
+	}
+}
 /*--------------getProductType Function--------------*/
 function getProductType($value){
 	if( $value == 1 ) {

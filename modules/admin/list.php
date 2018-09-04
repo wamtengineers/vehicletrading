@@ -2,6 +2,9 @@
 if(!defined("APP_START")) die("No Direct Access");
 $q="";
 $extra='';
+if( $_SESSION[ "logged_in_admin" ][ "branch_id" ] != 0 ) {
+	$extra=" and branch_id='".$_SESSION[ "logged_in_admin" ][ "branch_id" ]."'";
+}
 $is_search=false;
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
@@ -13,6 +16,18 @@ else
 	$q="";
 if(!empty($q)){
 	$extra.=" and username like '%".$q."%'";
+	$is_search=true;
+}
+if(isset($_GET["branch_id"])){
+	$branch_id=slash($_GET["branch_id"]);
+	$_SESSION["admin_manage"]["branch_id"]=$branch_id;
+}
+if(isset($_SESSION["admin_manage"]["branch_id"]))
+	$branch_id=$_SESSION["admin_manage"]["branch_id"];
+else
+	$branch_id="";
+if($branch_id!=""){
+	$extra.=" and branch_id='".$branch_id."'";
 	$is_search=true;
 }
 ?>
@@ -31,7 +46,28 @@ if(!empty($q)){
 	<li class="col-xs-12 col-lg-12 col-sm-12">
         <div>
         	<form class="form-horizontal" action="" method="get">
-                <div class="col-sm-10 col-xs-8">
+            	<?php
+                if( $_SESSION[ "logged_in_admin" ][ "branch_id" ] == 0 ) {
+					?>
+                    <div class="col-sm-3">
+                      <select name="branch_id" id="branch_id" class="custom_select">
+                            <option value=""<?php echo ($branch_id=="")? " selected":"";?>>Select Branch</option>
+                            <?php
+                                $res=doquery("select * from branch order by title",$dblink);
+                                if(numrows($res)>=0){
+                                    while($rec=dofetch($res)){
+                                    ?>
+                                    <option value="<?php echo $rec["id"]?>" <?php echo($branch_id==$rec["id"])?"selected":"";?>><?php echo unslash($rec["title"])?></option>
+                                    <?php
+                                    }
+                                }	
+                            ?>
+                        </select>
+                    </div>
+                	<?php
+				}
+				?>
+                <div class="col-sm-3 col-xs-8">
                   <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" >  
                 </div>
                 <div class="col-sm-1 col-xs-2">
@@ -49,6 +85,7 @@ if(!empty($q)){
                 <th class="text-center" width="5%"><div class="checkbox checkbox-primary">
                     <input type="checkbox" id="select_all" value="0" title="Select All Records">
                     <label for="select_all"></label></div></th>
+                <th>Branch</th>
                 <th>Admin Type</th>
                 <th>User Name</th>
                 <th>Name</th>
@@ -71,6 +108,8 @@ if(!empty($q)){
                             <input type="checkbox" name="id[]" id="<?php echo "rec_".$sn?>"  value="<?php echo $r["id"]?>" title="Select Record" />
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
+                        <?php $branch = dofetch(doquery("select * from branch where id = '".$r["branch_id"]."'",$dblink));?>
+                        <td><?php if($r[ "branch_id" ] == 0 ) { echo "All Branches";} else echo  unslash($branch["title"]); ?></td>
                         <td><?php if($r["admin_type_id"]==0) echo "Default"; else echo get_field($r["admin_type_id"], "admin_type","title");?></td>
                         <td><?php echo unslash($r["username"]); ?></td>
                         <td><?php echo unslash($r["name"]); ?></td>
@@ -108,14 +147,14 @@ if(!empty($q)){
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
                     </td>
-                    <td colspan="3" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "admin", $sql, $pageNum)?></td>
+                    <td colspan="4" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "admin", $sql, $pageNum)?></td>
                 </tr>
                 <?php	
             }
             else{	
                 ?>
                 <tr>
-                    <td colspan="8"  class="no-record">No Result Found</td>
+                    <td colspan="9"  class="no-record">No Result Found</td>
                 </tr>
                 <?php
             }

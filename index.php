@@ -3,6 +3,7 @@ include("include/db.php");
 include("include/utility.php");
 include("include/session.php");
 $page="index";
+
 ?>
 <?php include("include/header.php");?>		
    <div class="page-header">

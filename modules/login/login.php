@@ -14,6 +14,9 @@ if(isset($_POST["login_submit"])){
 			if(isset($_POST["remmeber_me"])){
 				setcookie('_admin_logged_in', $row["id"], strtotime('+14 days'));
 			}
+			if($_SESSION["logged_in_admin"]["branch_id"]!=0){
+				$_SESSION["current_branch_id"]=$_SESSION["logged_in_admin"]["branch_id"];
+			}
 			header('Location: index.php');
 			die;
 	 	}
