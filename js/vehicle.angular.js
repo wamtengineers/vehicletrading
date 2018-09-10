@@ -56,6 +56,7 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			insha_charge: '',
 			total_price: '',
 			total_price_np: '',
+			equipments: [],
 			status: 1,
 		};
 		$scope.new_expense = {

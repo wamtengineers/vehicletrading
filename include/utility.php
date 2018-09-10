@@ -5,7 +5,13 @@ doquery( "SET time_zone='+05:00';", $dblink );
 /*--------------Site Configuration--------------*/
 function get_config($var){
 	global $dblink;
-	$sql="select value from config_variable where `key`='".slash($var)."'";
+	if(!isset($_SESSION["current_branch_id"])){
+		$sql="select value from config_variable where `key`='".slash($var)."'";
+		
+	}
+	else{
+		$sql="select value from config_variable where `key`='".slash($var)."' and  branch_id='".$_SESSION["current_branch_id"]."'";
+	}
 	$resConfig=doquery($sql,$dblink);
 	if(numrows($resConfig)>0){
 		while($rowConfig=dofetch($resConfig))

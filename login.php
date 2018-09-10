@@ -24,7 +24,7 @@ include("modules/login/login.php");
         	<div class="login-form">
                 <form name="loginfrm" method="post">
                     <div class="top">
-                        <h1><?php $login_logo=get_config("login_logo"); if(empty($login_logo)) echo $site_title; else { ?><img src="<?php echo $file_upload_root;?>config/<?php echo $login_logo?>" /><?php }?></h1>
+                        <h1>Admin Panel</h1>
                         <h4>Please Login to continue.</h4>
                     </div>
                     <?php

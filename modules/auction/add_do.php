@@ -6,7 +6,7 @@ if(isset($_POST["auction_add"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO auction (title) VALUES ('".slash($title)."')";
+		$sql="INSERT INTO auction (branch_id, title) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($title)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["auction_manage"]["add"]);
 		header('Location: auction_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

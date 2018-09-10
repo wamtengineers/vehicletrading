@@ -6,7 +6,7 @@ if(isset($_POST["config_variable_manage"])){
 	if(empty($title) || $type=="null" || $config_type_id==0)
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO config_variable (config_type_id, title, notes, type, default_values, `key`, `value`) VALUES ('".slash($config_type_id)."','".slash($title)."','".slash($notes)."','".slash($type)."','".slash($default_values)."','".slash($key)."','".slash($value)."')";
+		$sql="INSERT INTO config_variable (branch_id, config_type_id, title, notes, type, default_values, `key`, `value`) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($config_type_id)."','".slash($title)."','".slash($notes)."','".slash($type)."','".slash($default_values)."','".slash($key)."','".slash($value)."')";
 		doquery($sql,$dblink);
 		$id=inserted_id();
 		sorttable("config_variable", $id, $sortorder, "add", "config_type_id='".$config_type_id."'");

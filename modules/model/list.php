@@ -2,6 +2,9 @@
 if(!defined("APP_START")) die("No Direct Access");
 $q="";
 $extra='';
+if( $_SESSION[ "current_branch_id" ] != 0 ) {
+	$extra=" and branch_id='".$_SESSION[ "current_branch_id" ]."'";
+}
 $is_search=false;
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);

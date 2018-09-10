@@ -6,7 +6,7 @@ if(isset($_POST["rixo_add"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO rixo (title, phone, date, price, sortorder, comments) VALUES ('".slash($title)."', '".slash($phone)."', '".slash(date_dbconvert($date))."', '".slash($price)."', '".slash($sortorder)."', '".slash($comments)."')";
+		$sql="INSERT INTO rixo (branch_id, title, phone, date, price, sortorder, comments) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($title)."', '".slash($phone)."', '".slash(date_dbconvert($date))."', '".slash($price)."', '".slash($sortorder)."', '".slash($comments)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["rixo_manage"]["add"]);
 		header('Location: rixo_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

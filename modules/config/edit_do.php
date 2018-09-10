@@ -25,7 +25,7 @@ if(isset($_POST["config_edit"])){
 				case "text":
 				case "editor":
 				case "textarea":
-					$sql="Update config_variable set value='".slash($_POST[$type."_".$rec["id"]])."' where id='".$rec["id"]."'";
+					$sql="Update config_variable set value='".slash($_POST[$type."_".$rec["id"]])."', `branch_id`='".$_SESSION["current_branch_id"]."' where id='".$rec["id"]."' and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 					doquery($sql,$dblink);
 				break;
 				case "checkbox":
@@ -46,7 +46,7 @@ if(isset($_POST["config_edit"])){
 					else{
 						$f_value.=str_replace(":selected","",$default_values);
 						}
-					$sql="Update config_variable set default_values='".slash($f_value)."' where id='".$rec["id"]."'";
+					$sql="Update config_variable set default_values='".slash($f_value)."', `branch_id`='".$_SESSION["current_branch_id"]."' where id='".$rec["id"]."' and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 					doquery($sql,$dblink);
 				break;
 				case "radio":
@@ -65,7 +65,7 @@ if(isset($_POST["config_edit"])){
 						}
 						$f_value=substr($f_value,0,strlen($f_value)-1);
 					}
-					$sql="Update config_variable set default_values='".slash($f_value)."' where id='".$rec["id"]."'";
+					$sql="Update config_variable set default_values='".slash($f_value)."', `branch_id`='".$_SESSION["current_branch_id"]."' where id='".$rec["id"]."' and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 					doquery($sql,$dblink);
 				break;
 				case "file":
@@ -76,7 +76,7 @@ if(isset($_POST["config_edit"])){
 						$img_ext=explode(".",$_FILES[$type."_".$rec["id"]]["name"]);
 						$img=unslash($rec["key"]).".".$img_ext[count($img_ext)-1];	
 						move_uploaded_file($_FILES[$type."_".$rec["id"]]["tmp_name"],$file_upload_root."config/".$img);
-						$sql="Update config_variable set value='".$img."' where id='".$rec["id"]."'";
+						$sql="Update config_variable set value='".$img."', `branch_id`='".$_SESSION["current_branch_id"]."' where id='".$rec["id"]."' and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 						doquery($sql,$dblink);
 						
 					}

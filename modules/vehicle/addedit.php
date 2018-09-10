@@ -236,8 +236,8 @@ else {
                                 <div class="clearfix">
                                     <div class="col-md-3" ng-repeat="equipment in equipments">
                                         <div class="checkbox checkbox-primary">
-                                            <input type="checkbox" name="" id="equipment.id" value="" ng-model="vehicle.equipment.id">
-                                            <label for="equipment.id">{{ equipment.title }}</label>
+                                            <input type="checkbox" name="vehicle.equipments.equipment_id[]" id="{{equipment.title}}" value="" ng-model="vehicle.equipments.equipment_id">
+                                            <label for="{{equipment.title}}">{{ equipment.title }}</label>
                                         </div>
                                     </div>
                                 </div>

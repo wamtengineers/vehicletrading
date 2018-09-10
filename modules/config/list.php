@@ -51,7 +51,7 @@ else
         	?>
     		<div style="text-align:left; font-weight:bold; margin-bottom:40px;"><?php echo htmlentities(unslash($rec["title"]));?></div>
    			<?php
-			$res1=doquery("Select * from config_variable where config_type_id='".addslashes($rec["id"])."' order by id ",$dblink);
+			$res1=doquery("Select * from config_variable where config_type_id='".addslashes($rec["id"])."' and branch_id='".$_SESSION["current_branch_id"]."' order by id ",$dblink);
 			if(numrows($res1)>0){
 				while($rec1=dofetch($res1)){
 					$rec1["value"]=unslash($rec1["value"]);

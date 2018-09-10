@@ -152,6 +152,17 @@ if( count( $_POST ) > 0 ) {
 					"consignee_name" => $r[ "consignee_name" ],
 					"status" => $r[ "status" ]
 				);
+				$equipments = array();
+				$rs1 = doquery( "select * from vehicle_2_equipment where vehicle_id='".$id."' order by vehicle_id", $dblink );
+				if( numrows( $rs1 ) > 0 ) {
+					while( $r1 = dofetch( $rs1 ) ) {
+						$equipments[] = array(
+							"vehicle_id" => $id,
+							"equipment_id" => $r1[ "equipment_id" ],
+                        );
+					}
+				}
+				$vehicle[ "equipments" ] = $equipments;
 			}
 			$response = $vehicle;
 		break;
@@ -169,9 +180,27 @@ if( count( $_POST ) > 0 ) {
 					$vehicle_id = $vehicle->id;
 				}
 				else {
-					doquery( "insert into vehicle (title, make_id, model_id, year, stock_no, chassis_no, month, mileage, grade, condition_type, body_type_id, fuel_tank, transmission, engine_no, engine_cc, doors, seating, drive, drive_type, color_interior, color_exterior, options, fob_price, discount_price, cnf_price, doc_paper, container_no, bl_no, bl_date, export, consignee_name, s_charge, gov_tax, expanses, freight, yard_charge, insha_charge, total_price, total_price_np, status, added_by) VALUES ('".slash($vehicle->title)."', '".slash($vehicle->make_id)."', '".slash($vehicle->model_id)."', '".slash($vehicle->year)."', '".slash($vehicle->stock_no)."', '".slash($vehicle->chassis_no)."', '".slash($vehicle->month)."', '".slash($vehicle->mileage)."', '".slash($vehicle->grade)."', '".slash($vehicle->condition_type)."', '".slash($vehicle->body_type_id)."', '".slash($vehicle->fuel_tank)."', '".slash($vehicle->transmission)."', '".slash($vehicle->engine_no)."', '".slash($vehicle->engine_cc)."', '".slash($vehicle->doors)."', '".slash($vehicle->seating)."', '".slash($vehicle->drive)."', '".slash($vehicle->drive_type)."', '".slash($vehicle->color_interior)."', '".slash($vehicle->color_exterior)."', '".slash($vehicle->options)."', '".slash($vehicle->fob_price)."', '".slash($vehicle->discount_price)."', '".slash($vehicle->cnf_price)."', '".slash($vehicle->doc_paper)."', '".slash($vehicle->container_no)."', '".slash($vehicle->bl_no)."', '".slash(date_dbconvert($vehicle->bl_date))."', '".slash($vehicle->export)."', '".slash($vehicle->consignee_name)."', '".slash($vehicle->s_charge)."', '".slash($vehicle->gov_tax)."', '".slash($vehicle->expanses)."', '".slash($vehicle->freight)."', '".slash($vehicle->yard_charge)."', '".slash($vehicle->insha_charge)."', '".slash($vehicle->total_price)."', '".slash($vehicle->total_price_np)."', '".slash($vehicle->status)."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
+					doquery( "insert into vehicle (branch_id, title, make_id, model_id, year, stock_no, chassis_no, month, mileage, grade, condition_type, body_type_id, fuel_tank, transmission, engine_no, engine_cc, doors, seating, drive, drive_type, color_interior, color_exterior, options, fob_price, discount_price, cnf_price, doc_paper, container_no, bl_no, bl_date, export, consignee_name, s_charge, gov_tax, expanses, freight, yard_charge, insha_charge, total_price, total_price_np, status, added_by) VALUES ( '".$_SESSION["current_branch_id"]."', '".slash($vehicle->title)."', '".slash($vehicle->make_id)."', '".slash($vehicle->model_id)."', '".slash($vehicle->year)."', '".slash($vehicle->stock_no)."', '".slash($vehicle->chassis_no)."', '".slash($vehicle->month)."', '".slash($vehicle->mileage)."', '".slash($vehicle->grade)."', '".slash($vehicle->condition_type)."', '".slash($vehicle->body_type_id)."', '".slash($vehicle->fuel_tank)."', '".slash($vehicle->transmission)."', '".slash($vehicle->engine_no)."', '".slash($vehicle->engine_cc)."', '".slash($vehicle->doors)."', '".slash($vehicle->seating)."', '".slash($vehicle->drive)."', '".slash($vehicle->drive_type)."', '".slash($vehicle->color_interior)."', '".slash($vehicle->color_exterior)."', '".slash($vehicle->options)."', '".slash($vehicle->fob_price)."', '".slash($vehicle->discount_price)."', '".slash($vehicle->cnf_price)."', '".slash($vehicle->doc_paper)."', '".slash($vehicle->container_no)."', '".slash($vehicle->bl_no)."', '".slash(date_dbconvert($vehicle->bl_date))."', '".slash($vehicle->export)."', '".slash($vehicle->consignee_name)."', '".slash($vehicle->s_charge)."', '".slash($vehicle->gov_tax)."', '".slash($vehicle->expanses)."', '".slash($vehicle->freight)."', '".slash($vehicle->yard_charge)."', '".slash($vehicle->insha_charge)."', '".slash($vehicle->total_price)."', '".slash($vehicle->total_price_np)."', '".slash($vehicle->status)."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
 					$vehicle_id = inserted_id();
 				}
+				$equipment_ids = array();
+				foreach( $vehicle->equipments as $equipment ) {
+					if( !empty( $vehicle->id ) ) { 
+						doquery( "update vehicle_2_equipment set `equipment_id`='".slash( $equipment->equipment_id )."' where vehicle_id='".$vehicle->id."'", $dblink );
+						$vehicle_id = $vehicle->id;
+					}
+					else {						
+						doquery( "insert into vehicle_2_equipment ( vehicle_id, equipment_id ) values( '".$vehicle->id."', '".$equipment->equipment_id."' )", $dblink );
+						$vehicle_id = inserted_id();
+						$equipment_ids[] = $equipment->equipment_id;
+					}
+				}
+				
+				/*if( !empty( $addedit->id ) && count( $item_ids ) > 0 ) {
+					$rs = doquery( "select * from sales_items where sales_id='".$addedit_id."' and id not in( ".implode( ",", $item_ids )." )", $dblink );
+					
+					doquery( "delete from sales_items where sales_id='".$addedit_id."' and id not in( ".implode( ",", $item_ids )." )", $dblink );
+				}*/
 				$response = array(
 					"status" => 1,
 					"id" => $vehicle_id
@@ -212,7 +241,7 @@ if( count( $_POST ) > 0 ) {
 			$response = $expense_categories;
 		break;
 		case "get_expense":
-			$rs = doquery( "select * from expense where status = 1 order by datetime_added desc, id desc", $dblink );
+			$rs = doquery( "select * from expense where status = 1 and branch_id='".$_SESSION[ "current_branch_id" ]."' order by datetime_added desc, id desc", $dblink );
 			$expense = array();
 			if( numrows( $rs ) > 0 ) {
 				while( $r = dofetch( $rs ) ) {
@@ -236,7 +265,7 @@ if( count( $_POST ) > 0 ) {
 					doquery("update expense set expense_category_id = '".slash($expense->expense_category_id)."', account_id='".slash($expense->account_id)."', amount = '".slash($expense->amount)."', details = '".slash($expense->details)."', currency_id='".slash($expense->currency_id)."' where id = '".$expense->id."'", $dblink);
 				}
 				else{
-					doquery("insert into expense(datetime_added, expense_category_id, details, amount, account_id, currency_id, added_by) values(NOW(), '".slash($expense->expense_category_id)."', '".slash($expense->details)."', '".slash($expense->amount)."', '".slash($expense->account_id)."', '".slash($expense->currency_id)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
+					doquery("insert into expense(branch_id, datetime_added, expense_category_id, details, amount, account_id, currency_id, added_by) values('".$_SESSION["current_branch_id"]."', NOW(), '".slash($expense->expense_category_id)."', '".slash($expense->details)."', '".slash($expense->amount)."', '".slash($expense->account_id)."', '".slash($expense->currency_id)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
 					$id = inserted_id();
 					$r = dofetch(doquery("select * from expense where id ='".$id."'", $dblink));
 					$expense = array(
@@ -266,8 +295,6 @@ if( count( $_POST ) > 0 ) {
 		break;
 		case "add_vehicle_rixo":
 			$vehicle_rixo = json_decode( $vehicle_rixo );
-			
-			
 			if( !empty( $vehicle_rixo->title ) && !empty( $vehicle_rixo->price ) ) {
 				$vehicles = dofetch(doquery("select * from vehicle where id ='".$id."'", $dblink));
 			$vehicle_id = $vehicles["id"];

@@ -6,7 +6,7 @@ if(isset($_POST["Submit"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO config_type (title) VALUES ('".slash($title)."')";
+		$sql="INSERT INTO config_type (branch_id, title) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($title)."')";
 		doquery($sql,$dblink);
 		$id=inserted_id();
 		sorttable("config_type", $id, $sortorder, "add");

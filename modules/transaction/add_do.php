@@ -6,7 +6,7 @@ if(isset($_POST["transaction_add"])){
 	if($account_id == "")
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO transaction (account_id, reference_id, datetime_added, amount, details, currency_id) VALUES ('".slash($account_id)."','".slash($reference_id)."','".slash(datetime_dbconvert($datetime_added))."','".slash($amount)."','".slash($details)."','".slash($currency_id)."')";
+		$sql="INSERT INTO transaction (branch_id, account_id, reference_id, datetime_added, amount, details, currency_id) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($account_id)."','".slash($reference_id)."','".slash(datetime_dbconvert($datetime_added))."','".slash($amount)."','".slash($details)."','".slash($currency_id)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["transaction_manage"]["add"]);
 		header('Location: transaction_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

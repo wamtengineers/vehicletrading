@@ -46,14 +46,14 @@
        		<ul class="sidebar-panel nav">
   				<li class="sidetitle">MAIN</li>
 				<?php
-					$parents=doquery("select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id where parent_id=0 and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' order by sortorder",$dblink);
+					$parents=doquery("Select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id left join menu_2_branch c on a.id = c.menu_id where parent_id=0 and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' and ( branch_id='".($_SESSION[ "current_branch_id" ])."' or branch_id is null ) order by sortorder ASC",$dblink);
 					if(numrows($parents)>0){
 						while($parent=dofetch($parents)){
 						?>
 						<li>
                         	<a href="<?php echo unslash($parent["url"])?>"><span class="icon color5"><i class="fa fa-<?php echo unslash($parent["small_icon"])?>"></i></span><?php echo unslash($parent["title"])?>
 							<?php
-								$submenus=doquery("select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id where parent_id='".$parent["id"]."' and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' order by sortorder",$dblink);
+								$submenus=doquery("Select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id left join menu_2_branch c on a.id = c.menu_id where parent_id='".$parent["id"]."' and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' and ( branch_id='".($_SESSION[ "current_branch_id" ])."' or branch_id is null ) order by sortorder ASC",$dblink);
 								if(numrows($submenus)>0){
 									?>
                                 <span class="caret"></span></a>

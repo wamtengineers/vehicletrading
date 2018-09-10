@@ -3,6 +3,9 @@ if(!defined("APP_START")) die("No Direct Access");
 $q="";
 $extra='';
 $is_search=false;
+if( $_SESSION[ "current_branch_id" ] != 0 ) {
+	$extra=" and branch_id='".$_SESSION[ "current_branch_id" ]."'";
+}
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
 	$_SESSION["vehicle_manage"]["q"]=$q;

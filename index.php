@@ -7,23 +7,22 @@ $page="index";
 ?>
 <?php include("include/header.php");?>		
    <div class="page-header">
-        <h1 class="title">Dashboard</h1>
+        <h1 class="title"><?php echo get_field($_SESSION["current_branch_id"], "branch","title"); ?> Dashboard</h1>
         <ol class="breadcrumb">
-            <li class="active">Welcome to <?php echo $site_title?> Dashboard.</li>
+            <li class="active">Welcome to <?php echo get_field($_SESSION["current_branch_id"], "branch","title"); ?> Dashboard.</li>
         </ol>
+        <?php if( $_SESSION[ "logged_in_admin" ][ "branch_id" ] == 0 ) {?><a href="branches.php">Branches</a><?php }?>
     </div>
     <div class="container-widget row">
         <div class="col-md-12">
             <?php
-            $res=doquery("Select * from menu where parent_id=0 and id in (select menu_id from menu_2_admin_type where admin_type_id='".$_SESSION[ "logged_in_admin" ][ "admin_type_id" ]."') order by sortorder ASC",$dblink);
+            $res=doquery("Select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id left join menu_2_branch c on a.id = c.menu_id where parent_id=0 and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' and ( branch_id='".($_SESSION[ "current_branch_id" ])."' or branch_id is null ) order by sortorder ASC",$dblink);
             if(numrows($res)>0){
                 while($rec=dofetch($res)){
-                    ?>
-                    <h2 class="title"><?php echo $rec["title"]?></h2>
-                    <?php
-                    $res1=doquery("Select * from menu where parent_id=".$rec["id"]." and id in (select menu_id from menu_2_admin_type where admin_type_id='".$_SESSION[ "logged_in_admin" ][ "admin_type_id" ]."') order by sortorder ASC",$dblink);
+                    $res1=doquery("Select * from menu a inner join menu_2_admin_type b on a.id = b.menu_id left join menu_2_branch c on a.id = c.menu_id where parent_id='".$rec["id"]."' and admin_type_id='".$_SESSION["logged_in_admin"]["admin_type_id"]."' and ( branch_id='".($_SESSION[ "current_branch_id" ])."' or branch_id is null ) order by sortorder ASC",$dblink);
                     if(numrows($res1)>0){
                         ?>
+                        <h2 class="title"><?php echo $rec["title"]?></h2>
                         <ul class="menu-boxes clearfix">
                             <?php
                             while($rec1=dofetch($res1)){
