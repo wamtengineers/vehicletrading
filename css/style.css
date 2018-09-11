@@ -5186,8 +5186,8 @@ html, body, #wrapper{
 	margin-bottom:0;
 }
 .vehicle-form .table .checkbox{
-	display: inline-block;
-	margin: 5px 10px;
+	margin: 0;
+	padding:0;
 }
 h4.form-label{
 	margin-top:5px;

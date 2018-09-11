@@ -76,6 +76,7 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 		};
 		$scope.updateDate = function(){
 			$scope.vehicle.datetime_added = $(".angular-datetimepicker").val();
+			$scope.new_vehicle_rixo.rixo_date = $(".angular-datetimepicker").val();
 			$scope.$apply();
 		}
 		angular.element(document).ready(function () {

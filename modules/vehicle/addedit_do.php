@@ -87,13 +87,12 @@ if( count( $_POST ) > 0 ) {
 			$response = $auction;
 		break;
 		case "get_vehicle_rixo":
-			$rs = doquery( "select * from rixo where status = 1 order by date desc, id desc", $dblink );
+			$rs = doquery( "select * from rixo where status = 1 and branch_id='".$_SESSION["current_branch_id"]."' order by date desc, id desc", $dblink );
 			$vehicle_rixo = array();
 			if( numrows( $rs ) > 0 ) {
 				while( $r = dofetch( $rs ) ) {
 					$vehicle_rixo[] = array(
 						"id" => $r[ "id" ],
-						"vehicle_id" => $r[ "vehicle_id" ],
 						"title" => unslash($r[ "title" ]),
 						"rixo_date" => date_convert($r[ "date" ]),
 						"price" => $r[ "price" ],
@@ -150,7 +149,7 @@ if( count( $_POST ) > 0 ) {
 					"total_price" => $r[ "total_price" ],
 					"total_price_np" => $r[ "total_price_np" ],
 					"consignee_name" => $r[ "consignee_name" ],
-					"status" => $r[ "status" ]
+					"status" => $r[ "status" ],
 				);
 				$equipments = array();
 				$rs1 = doquery( "select * from vehicle_2_equipment where vehicle_id='".$id."' order by vehicle_id", $dblink );
@@ -184,23 +183,14 @@ if( count( $_POST ) > 0 ) {
 					$vehicle_id = inserted_id();
 				}
 				$equipment_ids = array();
-				foreach( $vehicle->equipments as $equipment ) {
-					if( !empty( $vehicle->id ) ) { 
-						doquery( "update vehicle_2_equipment set `equipment_id`='".slash( $equipment->equipment_id )."' where vehicle_id='".$vehicle->id."'", $dblink );
-						$vehicle_id = $vehicle->id;
-					}
-					else {						
-						doquery( "insert into vehicle_2_equipment ( vehicle_id, equipment_id ) values( '".$vehicle->id."', '".$equipment->equipment_id."' )", $dblink );
+				foreach( $vehicle->equipments as $equipment ) {	
+					if( $equipment->equipment_id ) {			
+						doquery( "insert into vehicle_2_equipment ( vehicle_id, equipment_id ) values( '".$vehicle_id."', '".$equipment->equipment_id."' )", $dblink );
 						$vehicle_id = inserted_id();
 						$equipment_ids[] = $equipment->equipment_id;
 					}
-				}
 				
-				/*if( !empty( $addedit->id ) && count( $item_ids ) > 0 ) {
-					$rs = doquery( "select * from sales_items where sales_id='".$addedit_id."' and id not in( ".implode( ",", $item_ids )." )", $dblink );
-					
-					doquery( "delete from sales_items where sales_id='".$addedit_id."' and id not in( ".implode( ",", $item_ids )." )", $dblink );
-				}*/
+				}
 				$response = array(
 					"status" => 1,
 					"id" => $vehicle_id
@@ -267,7 +257,7 @@ if( count( $_POST ) > 0 ) {
 				else{
 					doquery("insert into expense(branch_id, datetime_added, expense_category_id, details, amount, account_id, currency_id, added_by) values('".$_SESSION["current_branch_id"]."', NOW(), '".slash($expense->expense_category_id)."', '".slash($expense->details)."', '".slash($expense->amount)."', '".slash($expense->account_id)."', '".slash($expense->currency_id)."', '".$_SESSION["logged_in_admin"]["id"]."')", $dblink);
 					$id = inserted_id();
-					$r = dofetch(doquery("select * from expense where id ='".$id."'", $dblink));
+					$r = dofetch(doquery("select * from expense where id ='".$id."' and branch_id='".$_SESSION["current_branch_id"]."'", $dblink));
 					$expense = array(
 						"id" => $r[ "id" ],
 						"datetime_added" => date("h:i A", strtotime($r[ "datetime_added" ])),
@@ -296,18 +286,16 @@ if( count( $_POST ) > 0 ) {
 		case "add_vehicle_rixo":
 			$vehicle_rixo = json_decode( $vehicle_rixo );
 			if( !empty( $vehicle_rixo->title ) && !empty( $vehicle_rixo->price ) ) {
-				$vehicles = dofetch(doquery("select * from vehicle where id ='".$id."'", $dblink));
-			$vehicle_id = $vehicles["id"];
+				
 				if( !empty( $vehicle_rixo->id ) ) {
 					doquery("update rixo set title = '".slash($vehicle_rixo->title)."', phone='".slash($vehicle_rixo->phone)."', date = '".slash(date_dbconvert($vehicle_rixo->rixo_date))."', price = '".slash($vehicle_rixo->price)."', comments = '".slash($vehicle_rixo->comments)."' where id = '".$vehicle_rixo->id."'", $dblink);
 				}
 				else{
-					doquery("insert into rixo(vehicle_id, title, phone, date, price, comments) values('".$vehicle_id."', '".slash($vehicle_rixo->title)."', '".slash($vehicle_rixo->phone)."', '".slash(date_dbconvert($vehicle_rixo->rixo_date))."', '".slash($vehicle_rixo->price)."', '".slash($vehicle_rixo->comments)."')", $dblink);
+					doquery("insert into rixo(branch_id, title, phone, date, price, comments) values('".$_SESSION["current_branch_id"]."', '".slash($vehicle_rixo->title)."', '".slash($vehicle_rixo->phone)."', '".slash(date_dbconvert($vehicle_rixo->rixo_date))."', '".slash($vehicle_rixo->price)."', '".slash($vehicle_rixo->comments)."')", $dblink);
 					$id = inserted_id();
-					$r = dofetch(doquery("select * from rixo where vehicle_id ='".$vehicle_id."'", $dblink));
+					$r = dofetch(doquery("select * from rixo where id ='".$id."' and branch_id='".$_SESSION["current_branch_id"]."'", $dblink));
 					$vehicle_rixo = array(
 						"id" => $r[ "id" ],
-						"vehicle_id" => $vehicle_id,
 						"rixo_date" => date_convert($r[ "date" ]),
 						"phone" => unslash($r["phone"]),
 						"price" => unslash($r[ "price" ]),

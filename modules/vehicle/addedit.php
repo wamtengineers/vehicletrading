@@ -97,7 +97,7 @@ else {
                             <td>
                                 <label class="form-label" for="fuel_tank">Fuel Tank </label>
                                 <select name="fuel_tank" title="Choose Option" ng-model="vehicle.fuel_tank">
-                                    <option value="0">Select Fuel Tank</option>
+                                    <option value="">Select Fuel Tank</option>
                                     <option value="1">CNG</option>
                                     <option value="2">Diesel</option>
                                     <option value="3">Gasoline/Petrol</option>
@@ -108,7 +108,7 @@ else {
                             <td>
                                 <label class="form-label" for="transmission">Transmission </label>
                                 <select name="transmission" title="Choose Option" ng-model="vehicle.transmission">
-                                    <option value="0">Select Transmission</option>
+                                    <option value="">Select Transmission</option>
                                     <option value="1">Automatic</option>
                                     <option value="2">Manual</option>
                                 </select>
@@ -208,14 +208,14 @@ else {
                                 </select>
                             </td>
                             <td>
-                            	<label class="form-label" for="fob_price">Main Image </label>
-                                <input type="file" name="" />
+                            	<label class="form-label">Main Image </label>
+                                <input type="file" ng-model="vehicle.main_image" />
                             </td>
                         </tr>
                         <tr>
                         	<td>
-                            	<label class="form-label" for="fob_price">Auction Image </label>
-                                <input type="file" name="" />
+                            	<label class="form-label">Auction Image </label>
+                                <input type="file" ng-model="vehicle.auction_image" />
                             </td>
                         	<td>
                                 <label class="form-label" for="fob_price">Fob Price </label>
@@ -234,10 +234,14 @@ else {
                         	<td colspan="4">
                             	<h4 class="form-label">Equipments </h4>
                                 <div class="clearfix">
-                                    <div class="col-md-3" ng-repeat="equipment in equipments">
+                                    <div>
                                         <div class="checkbox checkbox-primary">
-                                            <input type="checkbox" name="vehicle.equipments.equipment_id[]" id="{{equipment.title}}" value="" ng-model="vehicle.equipments.equipment_id">
-                                            <label for="{{equipment.title}}">{{ equipment.title }}</label>
+                                        	<select title="Choose Option" ng-model="vehicle.equipments.equipment_id" name="equipment_ids[]" multiple="multiple" chosen>
+                                                    <option value="">Select Items</option>
+                                                    <option ng-repeat="equipment in equipments" value="{{ equipment.id }}"> {{ equipment.title }}</option>
+                                            </select>
+                                            <!--<input type="checkbox" name="vehicle.equipments[$index].equipment_id[]" id="vehicle.equipments[$index].equipment_id" ng-model="vehicle.equipments[$index].equipment_ids" ng-checked="vehicle.equipments[$index].equipment_id">
+                                            <label for="vehicle.equipments[$index].equipment_id">{{ equipment.title }}</label>-->
                                         </div>
                                     </div>
                                 </div>
@@ -304,45 +308,41 @@ else {
                         <tr>
                         	<td width="20%">
                             	<label class="form-label" for="">Lot Number </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
-                            </td>
-                            <td width="20%">
-                            	<label class="form-label" for="">Auction Name </label>
-                                <input type="text" title="Enter Lot Number" value="" class="form-control" />
+                                <input type="text" title="Enter Lot Number" ng-model="vehicle.lot_number" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Auction Date </label>
-                                <input type="text" title="Enter Lot Number" value="" class="form-control" />
+                                <input type="text" title="Enter Date" ng-model="vehicle.auction_date" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Buy By </label>
-                                <input type="text" title="Enter Lot Number" value="" class="form-control" />
+                                <input type="text" title="Enter Buy" ng-model="vehicle.buy_by" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Buying Price </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter Price" ng-model="vehicle.buying_price" class="form-control" />
                             </td>
                         </tr>
                         <tr>
                             <td width="20%">
                             	<label class="form-label" for="">Recycle Fees </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter Fees" ng-model="vehicle.recycle_fees" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Auction Fees </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter Fees" ng-model="vehicle.auction_fees" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Other Fees </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter Fees" ng-model="vehicle.other_fees" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Total Auction </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter Total" ng-model="vehicle.total_auction" class="form-control" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Without % - R </label>
-                                <input type="text" title="Enter Lot Number" class="form-control" />
+                                <input type="text" title="Enter" ng-model="vehicle.total_with_tax" class="form-control" />
                             </td>
                         </tr>
                     </table>
@@ -507,7 +507,7 @@ else {
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <!--<div class="col-md-6">
             <div class="form-group vehicle-form">
             	<div class="panel-body table-responsive">
                 	<table class="table table-hover list">
@@ -533,7 +533,7 @@ else {
                     </table>
                 </div>
             </div>
-        </div>
+        </div>-->
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-10">
