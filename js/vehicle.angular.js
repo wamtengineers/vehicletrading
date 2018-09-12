@@ -42,6 +42,16 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			fob_price: 0,
 			discount_price: 0,
 			cnf_price: 0,
+			auction_id: '',
+			lot_number: '',
+			auction_date: '',
+			buy_by: '',
+			buying_price: '',
+			recycle_fees: '',
+			auction_fees: '',
+			other_fees: '',
+			total_auction: '',
+			total_with_tax: '',
 			doc_paper: '',
 			container_no: '',
 			bl_no: '',
@@ -77,7 +87,13 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 		$scope.updateDate = function(){
 			$scope.vehicle.datetime_added = $(".angular-datetimepicker").val();
 			$scope.new_vehicle_rixo.rixo_date = $(".angular-datetimepicker").val();
+			$scope.new_vehicle_rixo.bl_date = $(".angular-datetimepicker").val();
+			$scope.new_vehicle_rixo.auction_date = $(".angular-datetimepicker").val();
 			$scope.$apply();
+		}
+		$scope.update_auction = function( ) {
+			$scope.wctAJAX( {action: 'update_auction', id: $scope.auction.id }, function(){});
+
 		}
 		angular.element(document).ready(function () {
 			$scope.wctAJAX( {action: 'get_accounts'}, function( response ){

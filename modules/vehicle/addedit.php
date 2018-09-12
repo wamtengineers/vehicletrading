@@ -236,7 +236,7 @@ else {
                                 <div class="clearfix">
                                     <div>
                                         <div class="checkbox checkbox-primary">
-                                        	<select title="Choose Option" ng-model="vehicle.equipments.equipment_id" name="equipment_ids[]" multiple="multiple" chosen>
+                                        	<select title="Choose Option" ng-model="vehicle.equipments.equipment_id" name="vehicle.equipments[]" multiple="multiple" chosen>
                                                     <option value="">Select Items</option>
                                                     <option ng-repeat="equipment in equipments" value="{{ equipment.id }}"> {{ equipment.title }}</option>
                                             </select>
@@ -301,7 +301,7 @@ else {
                             <th colspan="2">
                             	<select ng-model="vehicle.auction_id">
                                     <option value="">Select Auction</option>
-                                    <option ng-repeat="auction in auction" value="{{ auction.id }}">{{ auction.title }}</option>
+                                    <option ng-repeat="auction in auction" ng-click="update_auction( auction.id )" value="{{ auction.id }}">{{ auction.title }}</option>
                                 </select>
                             </th>
                         </tr>
@@ -312,7 +312,7 @@ else {
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Auction Date </label>
-                                <input type="text" title="Enter Date" ng-model="vehicle.auction_date" class="form-control" />
+                                <input type="text" title="Enter Date" ng-model="vehicle.auction_date" data-controllerid="vehicleController" class="form-control date-picker2 angular-datetimepicker" />
                             </td>
                             <td width="20%">
                             	<label class="form-label" for="">Buy By </label>
@@ -343,6 +343,47 @@ else {
                             <td width="20%">
                             	<label class="form-label" for="">Without % - R </label>
                                 <input type="text" title="Enter" ng-model="vehicle.total_with_tax" class="form-control" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group vehicle-form clearfix">
+            	<div class="panel-body table-responsive">
+                	<table class="table table-hover list">
+                    	<tr class="bg-info">
+                        	<th colspan="6">Export Details</th>
+                        </tr>
+                        <tr>
+                        	<td width="16.6%">
+                            	<label class="form-label" for="" ng-model="vehicle.doc_paper">Paper </label>
+                                <select title="Choose Option">
+                                    <option value="">Select Paper</option>
+                                    <option value="0">Received</option>
+                                    <option value="1">Wait</option>
+                                </select>
+                            </td>
+                            <td width="16.6%">
+                            	<label class="form-label" for="">Container No </label>
+                                <input type="text" title="Enter Container No" ng-model="vehicle.container_no" class="form-control" />
+                            </td>
+                            <td width="15.4%">
+                            	<label class="form-label" for="">B/L No: </label>
+                                <input type="text" title="Enter B/L No" ng-model="vehicle.bl_no" class="form-control" />
+                            </td>
+                            <td width="16.6%">
+                            	<label class="form-label" for="">B/L Date </label>
+                                <input type="text" ng-model="vehicle.bl_date" data-controllerid="vehicleController" class="form-control date-picker2 angular-datetimepicker" />
+                            </td>
+                            <td width="16.6%">
+                            	<label class="form-label" for="">Export </label>
+                                <input type="text" title="Enter Export" ng-model="vehicle.export" class="form-control" />
+                            </td>
+                            <td width="17%">
+                            	<label class="form-label" for="">Consignee Name </label>
+                                <input type="text" title="Enter Consignee Name" ng-model="vehicle.consignee_name" class="form-control" />
                             </td>
                         </tr>
                     </table>
@@ -410,47 +451,6 @@ else {
             </div>
         </div>
         
-        <div class="col-md-6">
-            <div class="form-group vehicle-form clearfix">
-            	<div class="panel-body table-responsive">
-                	<table class="table table-hover list">
-                    	<tr class="bg-info">
-                        	<th colspan="6">Export Details</th>
-                        </tr>
-                        <tr>
-                        	<td width="16.6%">
-                            	<label class="form-label" for="" ng-model="vehicle.doc_paper">Paper </label>
-                                <select title="Choose Option">
-                                    <option value="">Select Paper</option>
-                                    <option value="0">Received</option>
-                                    <option value="1">Wait</option>
-                                </select>
-                            </td>
-                            <td width="16.6%">
-                            	<label class="form-label" for="">Container No </label>
-                                <input type="text" title="Enter Container No" ng-model="vehicle.container_no" class="form-control" />
-                            </td>
-                            <td width="15.4%">
-                            	<label class="form-label" for="">B/L No: </label>
-                                <input type="text" title="Enter B/L No" ng-model="vehicle.bl_no" class="form-control" />
-                            </td>
-                            <td width="16.6%">
-                            	<label class="form-label" for="">B/L Date </label>
-                                <input type="text" ng-model="vehicle.bl_date" data-controllerid="vehicleController" class="form-control date-picker2 angular-datetimepicker" />
-                            </td>
-                            <td width="16.6%">
-                            	<label class="form-label" for="">Export </label>
-                                <input type="text" title="Enter Export" ng-model="vehicle.export" class="form-control" />
-                            </td>
-                            <td width="17%">
-                            	<label class="form-label" for="">Consignee Name </label>
-                                <input type="text" title="Enter Consignee Name" ng-model="vehicle.consignee_name" class="form-control" />
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
         <div class="col-md-6">
             <div class="form-group vehicle-form">
             	<div class="panel-body table-responsive">

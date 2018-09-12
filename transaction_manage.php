@@ -15,10 +15,11 @@ else{
 }
 $q="";
 $extra='';
-if( $_SESSION[ "current_branch_id" ] = "" ) {
+
+$is_search=false;
+if( $_SESSION[ "current_branch_id" ] != 0 ) {
 	$extra=" and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 }
-$is_search=false;
 if(isset($_GET["date_from"])){
 	$date_from=slash($_GET["date_from"]);
 	$_SESSION["transaction"]["list"]["date_from"]=$date_from;
