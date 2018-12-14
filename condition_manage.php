@@ -4,7 +4,7 @@ include("include/utility.php");
 include("include/session.php");
 include("include/paging.php");
 define("APP_START", 1);
-$filename = 'make_manage.php';
+$filename = 'condition_manage.php';
 include("include/admin_type_access.php");
 $tab_array=array("list", "add", "edit", "status", "delete", "bulk_action");
 if(isset($_REQUEST["tab"]) && in_array($_REQUEST["tab"], $tab_array)){
@@ -16,9 +16,9 @@ else{
 
 switch($tab){
 	case 'add':
-		$sortorder=dofetch(doquery("select count(id) from make",$dblink));
+		$sortorder=dofetch(doquery("select count(id) from `condition`",$dblink));
 		$sortorder=$sortorder[0]+1;
-		doquery( "insert into make(title, sortorder) values('', '".$sortorder."')", $dblink );
+		doquery( "insert into `condition`(title, sortorder) values('', '".$sortorder."')", $dblink );
 		$id = inserted_id();
 		?>
 			<tr data-id="<?php echo $id?>">
@@ -30,10 +30,10 @@ switch($tab){
                 <td><input type="text" value="" name="title" class="record_field_sortable"/></td>
                 <td class="text-center">
                     <a href="" class="save_record_sortable"><i class="fa fa-save"></i></a>
-                    <a href="make_manage.php?id=<?php echo $id;?>&tab=status&s=0" class="change_status_sortable">
+                    <a href="condition_manage.php?id=<?php echo $id;?>&tab=status&s=0" class="change_status_sortable">
                         <img src="images/offstatus.png" alt="Off" title="Set Status On">
                     </a>
-                    <a onclick="" class="delete_record_sortable" href="make_manage.php?id=<?php echo $id;?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
+                    <a onclick="" class="delete_record_sortable" href="condition_manage.php?id=<?php echo $id;?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
                 </td>
             </tr>
 		<?php
@@ -41,20 +41,20 @@ switch($tab){
 	break;
 	case 'edit':
 		extract( $_POST );
-		doquery( "update make set title = '".$title."' where id = '".$id."' ", $dblink );
+		doquery( "update `condition` set title = '".$title."' where id = '".$id."' ", $dblink );
 		die;
 	break;
 	case 'delete':
 		if(isset($_GET["id"]) && !empty($_GET["id"])){
-			doquery("delete from make where id='".slash($_GET["id"])."'",$dblink);
+			doquery("delete from `condition` where id='".slash($_GET["id"])."'",$dblink);
 			die;
 		}
 		die;
 	break;
 	case 'status':
 		if(isset($_GET["id"]) && !empty($_GET["id"])){
-			doquery("update make set status='".slash($_GET["s"])."' where id='".slash($_GET["id"])."'",$dblink);
-			echo 'make_manage.php?id='.slash($_GET["id"]).'&tab=status&s=';
+			doquery("update `condition` set status='".slash($_GET["s"])."' where id='".slash($_GET["id"])."'",$dblink);
+			echo 'condition_manage.php?id='.slash($_GET["id"]).'&tab=status&s=';
 			if( $_GET[ "s" ] == 0 ) {
 				echo '1##<img src="images/offstatus.png" alt="Off" title="Set Status On">';
 			}
@@ -65,7 +65,7 @@ switch($tab){
 		}
 	break;
 	case 'bulk_action':
-		include("modules/make/bulkactions.php");
+		include("modules/condition/bulkactions.php");
 	break;
 }
 ?>
@@ -75,7 +75,7 @@ switch($tab){
 		  <?php
             switch($tab){
                 case 'list':
-                    include("modules/make/list.php");
+                    include("modules/condition/list.php");
                 break;
             }
           ?>

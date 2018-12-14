@@ -95,22 +95,17 @@ else {
                         </tr>
                         <tr>
                             <td>
-                                <label class="form-label" for="fuel_tank">Fuel Tank </label>
-                                <select name="fuel_tank" title="Choose Option" ng-model="vehicle.fuel_tank">
+                            	<label class="form-label" for="fuel_tank_id">Fuel Tank </label>
+                                <select title="Choose Option" ng-model="vehicle.fuel_tank_id">
                                     <option value="">Select Fuel Tank</option>
-                                    <option value="1">CNG</option>
-                                    <option value="2">Diesel</option>
-                                    <option value="3">Gasoline/Petrol</option>
-                                    <option value="4">LP Gas</option>
-                                    <option value="5">Hybrid</option>
+                                    <option ng-repeat="fuel in fuel_tank" value="{{ fuel.id }}">{{ fuel.title }}</option>
                                 </select>
                             </td>
                             <td>
-                                <label class="form-label" for="transmission">Transmission </label>
-                                <select name="transmission" title="Choose Option" ng-model="vehicle.transmission">
+                                <label class="form-label" for="transmission_id">Transmission </label>
+                                <select title="Choose Option" ng-model="vehicle.transmission_id">
                                     <option value="">Select Transmission</option>
-                                    <option value="1">Automatic</option>
-                                    <option value="2">Manual</option>
+                                    <option ng-repeat="trans in transmission" value="{{ trans.id }}">{{ trans.title }}</option>
                                 </select>
                             </td>
                             <td>
@@ -153,14 +148,10 @@ else {
                                 <input type="text" title="Enter Grade" ng-model="vehicle.grade" class="form-control" />
                             </td>
                             <td>
-                                <label class="form-label" for="condition_type">Condition </label>
-                                <select name="condition_type" title="Choose Option" ng-model="vehicle.condition_type">
+                                <label class="form-label" for="condition_id">Condition </label>
+                                <select title="Choose Option" ng-model="vehicle.condition_id">
                                     <option value="">Select Condition</option>
-                                    <option value="0">Good</option>
-                                    <option value="1">Very Good</option>
-                                    <option value="2">Excellent</option>
-                                    <option value="3">Running Condition</option>
-                                    <option value="4">Not Moveable</option>
+                                    <option ng-repeat="condition in conditions" value="{{ condition.id }}">{{ condition.title }}</option>
                                 </select>
                             </td>
                         </tr>
@@ -181,7 +172,7 @@ else {
                                 <label class="form-label" for="drive">Drive </label>
                                 <select name="drive" title="Choose Option" ng-model="vehicle.drive">
                                     <option value="">Select Drive</option>
-                                    <option value="0">Left Hande</option>
+                                    <option value="0">Left Hand</option>
                                     <option value="1">Right Hand</option>
                                 </select>
                             </td>
@@ -209,7 +200,12 @@ else {
                             </td>
                             <td>
                             	<label class="form-label">Main Image </label>
-                                <input type="file" ng-model="vehicle.main_image" />
+                                <?php
+									$main_image=dofetch(doquery("select main_image from vehicle where id='".$id."'",$dblink));
+									$img = $main_image["main_image"];
+									$main_image = !empty($img)?$file_upload_root.'main_image/'.$img.'?v='.rand():'images/place.jpg';
+									image_editor( 'main_image', $main_image, "vehicle_manage.php", array( "tab" => "main_image_upload", "id" => $id ) );
+								?>
                             </td>
                         </tr>
                         <tr>
@@ -236,12 +232,10 @@ else {
                                 <div class="clearfix">
                                     <div>
                                         <div class="checkbox checkbox-primary">
-                                        	<select title="Choose Option" ng-model="vehicle.equipments.equipment_id" name="vehicle.equipments[]" multiple="multiple" chosen>
-                                                    <option value="">Select Items</option>
-                                                    <option ng-repeat="equipment in equipments" value="{{ equipment.id }}"> {{ equipment.title }}</option>
+                                        	<select title="Choose Option" ng-model="vehicle.equipments" multiple="multiple" chosen>
+                                                <option value="">Select Items</option>
+                                                <option ng-repeat="equipment in equipments" value="{{ equipment.id }}"> {{ equipment.title }}</option>
                                             </select>
-                                            <!--<input type="checkbox" name="vehicle.equipments[$index].equipment_id[]" id="vehicle.equipments[$index].equipment_id" ng-model="vehicle.equipments[$index].equipment_ids" ng-checked="vehicle.equipments[$index].equipment_id">
-                                            <label for="vehicle.equipments[$index].equipment_id">{{ equipment.title }}</label>-->
                                         </div>
                                     </div>
                                 </div>
@@ -286,9 +280,20 @@ else {
                         <tr>
                         	<td colspan="4">
                         		<button type="submit" ng-disabled="processing" class="btn btn-default btn-l" ng-click="save_vehicle()" title="Submit Record"><i class="fa fa-spin fa-gear" ng-show="processing"></i> SUBMIT</button>
+                                <a href="#move" class="btn btn-default btn-l fancybox inline" ng-show="vehicle.id">Move</a>
                             </td>
                         </tr>
                     </table>
+                    <div id="move" style="display:none;" class="col-mdoffset-3">
+                        <div class="clearfix">
+                        	<label style="width:100%;">Move</label>
+                            <select title="Choose Option" ng-model="vehicle.branches" style="vertical-align: middle;width: 200px;">
+                                <option value="">Select Branches</option>
+                                <option ng-repeat="branch in branches" value="{{ branch.id }}"> {{ branch.title }}</option>
+                            </select>
+                            <button type="submit" class="btn btn-default btn-l" ng-click="save_vehicle()" title="Move Record"> Move</button>
+                        </div>
+                    </div>
                 </div>
             </div>
     	</div>
@@ -318,7 +323,7 @@ else {
                             	<label class="form-label" for="">Buy By </label>
                                 <input type="text" title="Enter Buy" ng-model="vehicle.buy_by" class="form-control" />
                             </td>
-                            <td width="20%">
+                            <td width="20%" colspan="2">
                             	<label class="form-label" for="">Buying Price </label>
                                 <input type="text" title="Enter Price" ng-model="vehicle.buying_price" class="form-control" />
                             </td>
@@ -435,7 +440,7 @@ else {
                             <td colspan="3">
                                 <label class="form-label" for="">Payment Account </label>
                                 <select name="category" title="Choose Option">
-                                    <option value="">Select Paper</option>
+                                    <option value="">Select Account</option>
                                 </select>
                             </td>
                             <td colspan="2">

@@ -4,7 +4,7 @@ $q="";
 $extra='';
 $is_search=false;
 if( $_SESSION[ "current_branch_id" ] != 0 ) {
-	$extra=" and branch_id='".$_SESSION[ "current_branch_id" ]."'";
+	$extra=" and a.id = b.vehicle_id and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 }
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
@@ -120,7 +120,7 @@ if($model_id!=""){
         </thead>
         <tbody>
             <?php 
-            $sql="select * from vehicle where 1 $extra order by id";
+            $sql="select a.* from vehicle a inner join vehicle_2_branch b on a.id = b.vehicle_id where 1 $extra order by id";
             $rs=show_page($rows, $pageNum, $sql);
             if(numrows($rs)>0){
                 $sn=1;

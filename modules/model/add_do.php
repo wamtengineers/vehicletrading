@@ -6,7 +6,7 @@ if(isset($_POST["model_add"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO model (branch_id, make_id, title, sortorder) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($make_id)."', '".slash($title)."', '".slash($sortorder)."')";
+		$sql="INSERT INTO model (make_id, title, sortorder) VALUES ('".slash($make_id)."', '".slash($title)."', '".slash($sortorder)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["model_manage"]["add"]);
 		header('Location: model_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

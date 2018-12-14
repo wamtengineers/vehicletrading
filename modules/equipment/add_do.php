@@ -6,7 +6,7 @@ if(isset($_POST["equipment_add"])){
 	if(empty($title))
 		$err="Fields with (*) are Mandatory.<br />";
 	if($err==""){
-		$sql="INSERT INTO equipment (title, sortorder) VALUES ('".slash($title)."', '".slash($sortorder)."')";
+		$sql="INSERT INTO equipment (branch_id, title, sortorder) VALUES ('".$_SESSION["current_branch_id"]."', '".slash($title)."', '".slash($sortorder)."')";
 		doquery($sql,$dblink);
 		unset($_SESSION["equipment_manage"]["add"]);
 		header('Location: equipment_manage.php?tab=list&msg='.url_encode("Sucessfully Added"));

@@ -5,37 +5,24 @@ $extra='';
 $is_search=false;
 if(isset($_GET["q"])){
 	$q=slash($_GET["q"]);
-	$_SESSION["model_manage"]["q"]=$q;
+	$_SESSION["condition_manage"]["q"]=$q;
 }
-if(isset($_SESSION["model_manage"]["q"]))
-	$q=$_SESSION["model_manage"]["q"];
+if(isset($_SESSION["condition_manage"]["q"]))
+	$q=$_SESSION["condition_manage"]["q"];
 else
 	$q="";
 if(!empty($q)){
 	$extra.=" and title like '%".$q."%'";
 	$is_search=true;
 }
-if(isset($_GET["make_id"])){
-	$make_id=slash($_GET["make_id"]);
-	$_SESSION["model_manage"]["make_id"]=$make_id;
-}
-if(isset($_SESSION["model_manage"]["make_id"]))
-	$make_id=$_SESSION["model_manage"]["make_id"];
-else
-	$make_id="";
-if($make_id!=""){
-	$extra.=" and make_id='".$make_id."'";
-	$is_search=true;
-}
 ?>
 <div class="page-header">
-	<h1 class="title">Model</h1>
+	<h1 class="title">Condition</h1>
   	<ol class="breadcrumb">
-    	<li class="active">Manage Model</li>
+    	<li class="active">Manage Condition</li>
   	</ol>
   	<div class="right">
     	<div class="btn-group" role="group" aria-label="..."> 
-        	<a href="model_manage.php?tab=add" class="btn btn-light editproject">Add New Account</a> 
             <a id="topstats" class="btn btn-light" href="#"><i class="fa fa-search"></i></a> 
     	</div> 
     </div> 
@@ -44,21 +31,6 @@ if($make_id!=""){
     <li class="col-xs-12 col-lg-12 col-sm-12">
     	<div>
         	<form class="form-horizontal" action="" method="get">
-            	<div class="col-sm-3">
-                  <select name="make_id" id="make_id" class="custom_select">
-                        <option value=""<?php echo ($make_id=="")? " selected":"";?>>Select Make</option>
-                        <?php
-                            $res=doquery("select * from make order by sortorder",$dblink);
-                            if(numrows($res)>=0){
-                                while($rec=dofetch($res)){
-                                ?>
-                                <option value="<?php echo $rec["id"]?>" <?php echo($make_id==$rec["id"])?"selected":"";?>><?php echo unslash($rec["title"])?></option>
-                            	<?php
-                                }
-                            }	
-                        ?>
-                    </select>
-                </div>
                 <div class="col-sm-3">
                   <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" >  
                 </div>
@@ -78,32 +50,29 @@ if($make_id!=""){
                 <th class="text-center" width="5%"><div class="checkbox checkbox-primary">
                     <input type="checkbox" id="select_all" value="0" title="Select All Records">
                     <label for="select_all"></label></div></th>
-                <th width="20%">Make</th>
-                <th width="20%">Title</th>
-                <th width="20%">Sortorder</th>
-                <th width="10%" class="text-center">Status</th>
+                <th width="30%">Title</th>
                 <th width="10%" class="text-center">Actions</th>
             </tr>
         </thead>
-        <tbody>
-            <?php 
-            $sql="select * from model where 1 $extra order by sortorder";
-            $rs=show_page($rows, $pageNum, $sql);
-            if(numrows($rs)>0){
+		<?php 
+        $rs=doquery("select * from `condition` where 1 $extra order by sortorder", $dblink);
+        if(numrows($rs)>0){
+            ?>
+            <tbody<?php echo !$is_search?' class="manage_sortable"':''?>>
+            	<?php
                 $sn=1;
                 while($r=dofetch($rs)){             
                     ?>
-                    <tr>
+                    <tr data-id="<?php echo $r[ "id" ]?>">
                         <td class="text-center"><?php echo $sn;?></td>
                         <td class="text-center"><div class="checkbox margin-t-0 checkbox-primary">
                             <input type="checkbox" name="id[]" id="<?php echo "rec_".$sn?>"  value="<?php echo $r["id"]?>" title="Select Record" />
                             <label for="<?php echo "rec_".$sn?>"></label></div>
                         </td>
-                        <td><?php echo get_field( unslash($r["make_id"]), "make", "title" ); ?></td>
-                        <td><?php echo unslash($r["title"]); ?></td>
-                        <td><?php echo unslash($r["sortorder"]); ?></td>
+                        <td><input type="text" value="<?php echo unslash($r["title"]); ?>" name="title" class="record_field_sortable"/></td>
                         <td class="text-center">
-                            <a href="model_manage.php?id=<?php echo $r['id'];?>&tab=status&s=<?php echo ($r["status"]==0)?1:0;?>">
+                            <a href="" class="save_record_sortable"><i class="fa fa-save"></i></a>
+                            <a href="condition_manage.php?id=<?php echo $r['id'];?>&tab=status&s=<?php echo ($r["status"]==0)?1:0;?>" class="change_status_sortable">
                                 <?php
                                 if($r["status"]==0){
                                     ?>
@@ -117,16 +86,15 @@ if($make_id!=""){
                                 }
                                 ?>
                             </a>
+                            <a onclick="" class="delete_record_sortable" href="condition_manage.php?id=<?php echo $r['id'];?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
                         </td>
-                        <td class="text-center">
-                            	<a href="model_manage.php?tab=edit&id=<?php echo $r['id'];?>"><img title="Edit Record" alt="Edit" src="images/edit.png"></a>&nbsp;&nbsp;
-                            	<a onclick="return confirm('Are you sure you want to delete')" href="model_manage.php?id=<?php echo $r['id'];?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
-                        </td>
-                    </tr>  
+                    </tr>
                     <?php 
                     $sn++;
                 }
                 ?>
+         	</tbody> 
+            </tfoot> 
                 <tr>
                     <td colspan="4" class="actions">
                         <select name="bulk_action" class="" id="bulk_action" title="Choose Action">
@@ -136,19 +104,21 @@ if($make_id!=""){
                             <option value="statusof">Set Status Off</option>
                         </select>
                         <input type="button" name="apply" value="Apply" id="apply_bulk_action" class="btn btn-light" title="Apply Action"  />
+                        <input type="button" value="Add New Record" id="add_new_record_sortable" class="btn btn-dark btn-info" title="Add New Record"  />
                     </td>
-                    <td colspan="3" class="paging" title="Paging" align="right"><?php echo pages_list($rows, "model", $sql, $pageNum)?></td>
                 </tr>
-                <?php	
-            }
-            else{	
-                ?>
-                <tr>
-                    <td colspan="7"  class="no-record">No Result Found</td>
-                </tr>
-                <?php
-            }
-            ?>
-        </tbody>
+           	</tfoot> 
+            <?php	
+     	}
+		else{	
+			?>
+            <tbody <?php echo !$is_search?' class="manage_sortable"':''?>></tbody>
+			<tr>
+				<td colspan="2"  class="no-record">No Result Found</td>
+                <td colspan="2"><input type="button" value="Add New Record" id="add_new_record_sortable" class="btn btn-dark btn-info" title="Add New Record"  /></td>
+			</tr>
+			<?php
+		}
+        ?>
      </table>
 </div>

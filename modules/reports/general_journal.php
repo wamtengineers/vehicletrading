@@ -94,9 +94,9 @@ if(!defined("APP_START")) die("No Direct Access");
                         <td class="text-center"><?php echo $sn;?></td>
                         <td><?php echo datetime_convert($r["datetime_added"]); ?></td>
                         <td><?php echo unslash($r["details"]); ?></td>
-                        <td class="text-right"><?php echo curr_format($r["debit"]); ?></td>
-                        <td class="text-right"><?php echo curr_format($r["credit"]); ?></td>
-                        <td class="text-right"><?php if($order == 'asc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} echo curr_format( $balance ); if($order == 'desc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} ?></td>
+                        <td class="text-right"><?php echo curr_format($r["debit"])." ". unslash($r["currency_symbol"]); ?></td>
+                        <td class="text-right"><?php echo curr_format($r["credit"])." ". unslash($r["currency_symbol"]); ?></td>
+                        <td class="text-right"><?php if($order == 'asc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} echo curr_format( $balance )." ". unslash($r["currency_symbol"]); if($order == 'desc'){$balance += ($r["debit"]-$r["credit"])*($order == 'desc'?'-1':1);} ?></td>
                     </tr>
                     <?php 
                     $sn++;

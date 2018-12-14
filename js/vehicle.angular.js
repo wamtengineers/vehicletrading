@@ -5,7 +5,11 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 		$scope.models = [];
 		$scope.makes = [];
 		$scope.equipments = [];
+		$scope.branches = [];
 		$scope.body_types = [];
+		$scope.fuel_tank = [];
+		$scope.transmission = [];
+		$scope.conditions = [];
 		$scope.expense_categories = [];
 		$scope.expenses = [];
 		$scope.currency_symbol = [];
@@ -26,10 +30,10 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			month: '',
 			mileage: '',
 			grade: '',
-			condition_type: '',
+			condition_id: '',
 			body_type_id: '',
-			fuel_tank: '',
-			transmission: '',
+			fuel_tank_id: '',
+			transmission_id: '',
 			engine_no: '',
 			engine_cc: '',
 			doors: '',
@@ -67,7 +71,24 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			total_price: '',
 			total_price_np: '',
 			equipments: [],
+			branches: [],
 			status: 1,
+		};
+		$scope.equipments = {
+			vehicle_id: "",
+			equipment_id: "",
+		};
+		$scope.equipment = {
+			"vehicle_id": "",
+			"equipment_id":""
+		};
+		$scope.branches = {
+			vehicle_id: "",
+			branch_id: "",
+		};
+		$scope.branch = {
+			"vehicle_id": "",
+			"branch_id":""
 		};
 		$scope.new_expense = {
 			"details": "",
@@ -118,6 +139,15 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			$scope.wctAJAX( {action: 'get_equipments'}, function( response ){
 				$scope.equipments = response;
 			});
+			$scope.wctAJAX( {action: 'get_fuel_tank'}, function( response ){
+				$scope.fuel_tank = response;
+			});
+			$scope.wctAJAX( {action: 'get_transmission'}, function( response ){
+				$scope.transmission = response;
+			});
+			$scope.wctAJAX( {action: 'get_condition'}, function( response ){
+				$scope.conditions = response;
+			});
 			$scope.wctAJAX( {action: 'get_currency'}, function( response ){
 				$scope.currency_symbol = response;
 			});
@@ -132,6 +162,9 @@ angular.module('vehicle', ['ngAnimate', 'angularMoment', 'ui.bootstrap', 'angula
 			});
 			$scope.wctAJAX( {action: 'get_auction'}, function( response ){
 				$scope.auction = response;
+			});
+			$scope.wctAJAX( {action: 'get_branches'}, function( response ){
+				$scope.branches = response;
 			});
 			if( $scope.vehicle_id > 0 ) {
 				$scope.wctAJAX( {action: 'get_vehicle', id: $scope.vehicle_id}, function( response ){

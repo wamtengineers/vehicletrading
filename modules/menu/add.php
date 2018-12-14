@@ -8,7 +8,7 @@ else{
 	$branch_ids=array();
 	$title="";
 	$url="";
-	$parentid=0;
+	$parent_id=0;
 	$small_icon="";
 	$sortorder=get_new_sort_order("menu");
 }
@@ -103,7 +103,7 @@ else{
                         if(numrows($res)>0){
                             while($rec=dofetch($res)){
                     ?>
-                            <option value="<?php echo $rec["id"]?>"<?php echo($parentid==$rec["id"])?"selected":"";?>><?php echo str_repeat("- ", $rec["depth"]).unslash($rec["title"]); ?></option>
+                            <option value="<?php echo $rec["id"]?>"<?php echo($parent_id==$rec["id"])?"selected":"";?>><?php echo str_repeat("- ", $rec["depth"]).unslash($rec["title"]); ?></option>
                      <?php			
                             }
                                     

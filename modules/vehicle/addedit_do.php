@@ -21,6 +21,19 @@ if( count( $_POST ) > 0 ) {
 			}
 			$response = $accounts;
 		break;
+		case "get_branches":
+			$rs = doquery( "select * from branch where status=1 order by id", $dblink );
+			$branches = array();
+			if( numrows( $rs ) > 0 ) {
+				while( $r = dofetch( $rs ) ) {
+					$branches[] = array(
+						"id" => $r[ "id" ],
+						"title" => unslash($r[ "title" ])
+					);
+				}
+			}
+			$response = $branches;
+		break;
 		case "get_make":
 			$rs = doquery( "select * from make where status=1 order by sortorder", $dblink );
 			$makes = array();
@@ -86,6 +99,45 @@ if( count( $_POST ) > 0 ) {
 			}
 			$response = $auction;
 		break;
+		case "get_fuel_tank":
+			$rs = doquery( "select * from fuel_tank where status=1 order by sortorder", $dblink );
+			$fuel_tank = array();
+			if( numrows( $rs ) > 0 ) {
+				while( $r = dofetch( $rs ) ) {
+					$fuel_tank[] = array(
+						"id" => $r[ "id" ],
+						"title" => unslash($r[ "title" ])
+					);
+				}
+			}
+			$response = $fuel_tank;
+		break;
+		case "get_transmission":
+			$rs = doquery( "select * from transmission where status=1 order by sortorder", $dblink );
+			$transmission = array();
+			if( numrows( $rs ) > 0 ) {
+				while( $r = dofetch( $rs ) ) {
+					$transmission[] = array(
+						"id" => $r[ "id" ],
+						"title" => unslash($r[ "title" ])
+					);
+				}
+			}
+			$response = $transmission;
+		break;
+		case "get_condition":
+			$rs = doquery( "select * from `condition` where status=1 order by sortorder", $dblink );
+			$conditions = array();
+			if( numrows( $rs ) > 0 ) {
+				while( $r = dofetch( $rs ) ) {
+					$conditions[] = array(
+						"id" => $r[ "id" ],
+						"title" => unslash($r[ "title" ])
+					);
+				}
+			}
+			$response = $conditions;
+		break;
 		case "get_vehicle_rixo":
 			$rs = doquery( "select * from rixo where status = 1 and branch_id='".$_SESSION["current_branch_id"]."' order by date desc, id desc", $dblink );
 			$vehicle_rixo = array();
@@ -119,10 +171,10 @@ if( count( $_POST ) > 0 ) {
 					"month" => $r[ "month" ],
 					"mileage" => $r[ "mileage" ],
 					"grade" => $r[ "grade" ],
-					"condition_type" => $r[ "condition_type" ],
+					"condition_id" => $r[ "condition_id" ],
 					"body_type_id" => $r[ "body_type_id" ],
-					"fuel_tank" => $r[ "fuel_tank" ],
-					"transmission" => $r[ "transmission" ],
+					"fuel_tank_id" => $r[ "fuel_tank_id" ],
+					"transmission_id" => $r[ "transmission_id" ],
 					"engine_no" => $r[ "engine_no" ],
 					"engine_cc" => $r[ "engine_cc" ],
 					"doors" => $r[ "doors" ],
@@ -162,16 +214,21 @@ if( count( $_POST ) > 0 ) {
 					"status" => $r[ "status" ],
 				);
 				$equipments = array();
-				$rs1 = doquery( "select * from vehicle_2_equipment where vehicle_id='".$id."' order by vehicle_id", $dblink );
+				$rs1 = doquery( "select * from vehicle_2_equipment where vehicle_id='".$id."'", $dblink );
 				if( numrows( $rs1 ) > 0 ) {
 					while( $r1 = dofetch( $rs1 ) ) {
-						$equipments[] = array(
-							"vehicle_id" => $id,
-							"equipment_id" => $r1[ "equipment_id" ],
-                        );
+						$equipments[] = $r1[ "equipment_id" ];
 					}
 				}
 				$vehicle[ "equipments" ] = $equipments;
+				$branches = array();
+				$rs1 = doquery( "select * from vehicle_2_branch where vehicle_id='".$id."' and branch_id = '".$_SESSION[ "current_branch_id" ]."'", $dblink );
+				if( numrows( $rs1 ) > 0 ) {
+					while( $r1 = dofetch( $rs1 ) ) {
+						$branches[] = $r1[ "branch_id" ];
+					}
+				}
+				$vehicle[ "branches" ] = $branches;
 			}
 			$response = $vehicle;
 		break;
@@ -185,22 +242,23 @@ if( count( $_POST ) > 0 ) {
 			}
 			if( count( $err ) == 0 ) {
 				if( !empty( $vehicle->id ) ) {
-					doquery( "update vehicle set `title`='".slash($vehicle->title)."', `make_id`='".slash($vehicle->make_id)."', `model_id`='".slash($vehicle->model_id)."', `year`='".slash($vehicle->year)."', `stock_no`='".slash($vehicle->stock_no)."', `chassis_no`='".slash($vehicle->chassis_no)."', `month`='".slash($vehicle->month)."', `mileage`='".slash($vehicle->mileage)."', `grade`='".slash($vehicle->grade)."', `condition_type`='".slash($vehicle->condition_type)."', `body_type_id`='".slash($vehicle->body_type_id)."', `fuel_tank`='".slash($vehicle->fuel_tank)."', `transmission`='".slash($vehicle->transmission)."', `engine_no`='".slash($vehicle->engine_no)."', `engine_cc`='".slash($vehicle->engine_cc)."', `doors`='".slash($vehicle->doors)."', `seating`='".slash($vehicle->seating)."', `drive`='".slash($vehicle->drive)."', `drive_type`='".slash($vehicle->drive_type)."', `color_interior`='".slash($vehicle->color_interior)."', `color_exterior`='".slash($vehicle->color_exterior)."', `options`='".slash($vehicle->options)."', `fob_price`='".slash($vehicle->fob_price)."', `discount_price`='".slash($vehicle->discount_price)."', `cnf_price`='".slash($vehicle->cnf_price)."', `auction_id`='".slash($vehicle->auction_id)."', `lot_number`='".slash($vehicle->lot_number)."', `auction_date`='".slash(date_dbconvert($vehicle->auction_date))."', `buy_by`='".slash($vehicle->buy_by)."', `buying_price`='".slash($vehicle->buying_price)."', `recycle_fees`='".slash($vehicle->recycle_fees)."', `auction_fees`='".slash($vehicle->auction_fees)."', `other_fees`='".slash($vehicle->other_fees)."', `total_auction`='".slash($vehicle->total_auction)."', `total_with_tax`='".slash($vehicle->total_with_tax)."', `doc_paper`='".slash($vehicle->doc_paper)."', `container_no`='".slash($vehicle->container_no)."', `bl_no`='".slash($vehicle->bl_no)."', `bl_date`='".slash(date_dbconvert($vehicle->bl_date))."', `export`='".slash($vehicle->export)."', `consignee_name`='".slash($vehicle->consignee_name)."', `s_charge`='".slash($vehicle->s_charge)."', `gov_tax`='".slash($vehicle->gov_tax)."', `expanses`='".slash($vehicle->expanses)."', `freight`='".slash($vehicle->freight)."', `yard_charge`='".slash($vehicle->yard_charge)."', `insha_charge`='".slash($vehicle->insha_charge)."', `total_price`='".slash($vehicle->total_price)."', `total_price_np`='".slash($vehicle->total_price_np)."', `status`='".slash($vehicle->status)."' where id='".$vehicle->id."'", $dblink );
+					doquery( "update vehicle set `title`='".slash($vehicle->title)."', `make_id`='".slash($vehicle->make_id)."', `model_id`='".slash($vehicle->model_id)."', `year`='".slash($vehicle->year)."', `stock_no`='".slash($vehicle->stock_no)."', `chassis_no`='".slash($vehicle->chassis_no)."', `month`='".slash($vehicle->month)."', `mileage`='".slash($vehicle->mileage)."', `grade`='".slash($vehicle->grade)."', `condition_id`='".slash($vehicle->condition_id)."', `body_type_id`='".slash($vehicle->body_type_id)."', `fuel_tank_id`='".slash($vehicle->fuel_tank_id)."', `transmission_id`='".slash($vehicle->transmission_id)."', `engine_no`='".slash($vehicle->engine_no)."', `engine_cc`='".slash($vehicle->engine_cc)."', `doors`='".slash($vehicle->doors)."', `seating`='".slash($vehicle->seating)."', `drive`='".slash($vehicle->drive)."', `drive_type`='".slash($vehicle->drive_type)."', `color_interior`='".slash($vehicle->color_interior)."', `color_exterior`='".slash($vehicle->color_exterior)."', `options`='".slash($vehicle->options)."', `fob_price`='".slash($vehicle->fob_price)."', `discount_price`='".slash($vehicle->discount_price)."', `cnf_price`='".slash($vehicle->cnf_price)."', `auction_id`='".slash($vehicle->auction_id)."', `lot_number`='".slash($vehicle->lot_number)."', `auction_date`='".slash(date_dbconvert($vehicle->auction_date))."', `buy_by`='".slash($vehicle->buy_by)."', `buying_price`='".slash($vehicle->buying_price)."', `recycle_fees`='".slash($vehicle->recycle_fees)."', `auction_fees`='".slash($vehicle->auction_fees)."', `other_fees`='".slash($vehicle->other_fees)."', `total_auction`='".slash($vehicle->total_auction)."', `total_with_tax`='".slash($vehicle->total_with_tax)."', `doc_paper`='".slash($vehicle->doc_paper)."', `container_no`='".slash($vehicle->container_no)."', `bl_no`='".slash($vehicle->bl_no)."', `bl_date`='".slash(date_dbconvert($vehicle->bl_date))."', `export`='".slash($vehicle->export)."', `consignee_name`='".slash($vehicle->consignee_name)."', `s_charge`='".slash($vehicle->s_charge)."', `gov_tax`='".slash($vehicle->gov_tax)."', `expanses`='".slash($vehicle->expanses)."', `freight`='".slash($vehicle->freight)."', `yard_charge`='".slash($vehicle->yard_charge)."', `insha_charge`='".slash($vehicle->insha_charge)."', `total_price`='".slash($vehicle->total_price)."', `total_price_np`='".slash($vehicle->total_price_np)."', `status`='".slash($vehicle->status)."' where id='".$vehicle->id."'", $dblink );
 					$vehicle_id = $vehicle->id;
+					doquery( "delete from vehicle_2_branch where vehicle_id = '".$vehicle_id."' and branch_id = '".$_SESSION[ "current_branch_id" ]."'", $dblink );
+					foreach( $vehicle->branches as $branch ) {	
+						doquery( "insert into vehicle_2_branch ( vehicle_id, branch_id ) values( '".$vehicle_id."', '".$branch."' )", $dblink );
+					}
 				}
 				else {
-					doquery( "insert into vehicle (branch_id, title, make_id, model_id, year, stock_no, chassis_no, month, mileage, grade, condition_type, body_type_id, fuel_tank, transmission, engine_no, engine_cc, doors, seating, drive, drive_type, color_interior, color_exterior, options, fob_price, discount_price, cnf_price, auction_id, lot_number, auction_date, buy_by, buying_price, recycle_fees, auction_fees, other_fees, total_auction, total_with_tax, doc_paper, container_no, bl_no, bl_date, export, consignee_name, s_charge, gov_tax, expanses, freight, yard_charge, insha_charge, total_price, total_price_np, status, added_by) VALUES ( '".$_SESSION["current_branch_id"]."', '".slash($vehicle->title)."', '".slash($vehicle->make_id)."', '".slash($vehicle->model_id)."', '".slash($vehicle->year)."', '".slash($vehicle->stock_no)."', '".slash($vehicle->chassis_no)."', '".slash($vehicle->month)."', '".slash($vehicle->mileage)."', '".slash($vehicle->grade)."', '".slash($vehicle->condition_type)."', '".slash($vehicle->body_type_id)."', '".slash($vehicle->fuel_tank)."', '".slash($vehicle->transmission)."', '".slash($vehicle->engine_no)."', '".slash($vehicle->engine_cc)."', '".slash($vehicle->doors)."', '".slash($vehicle->seating)."', '".slash($vehicle->drive)."', '".slash($vehicle->drive_type)."', '".slash($vehicle->color_interior)."', '".slash($vehicle->color_exterior)."', '".slash($vehicle->options)."', '".slash($vehicle->fob_price)."', '".slash($vehicle->discount_price)."', '".slash($vehicle->cnf_price)."', '".slash($vehicle->auction_id)."', '".slash($vehicle->lot_number)."', '".slash(date_dbconvert($vehicle->auction_date))."', '".slash($vehicle->buy_by)."', '".slash($vehicle->buying_price)."', '".slash($vehicle->recycle_fees)."', '".slash($vehicle->auction_fees)."', '".slash($vehicle->other_fees)."', '".slash($vehicle->total_auction)."', '".slash($vehicle->total_with_tax)."', '".slash($vehicle->doc_paper)."', '".slash($vehicle->container_no)."', '".slash($vehicle->bl_no)."', '".slash(date_dbconvert($vehicle->bl_date))."', '".slash($vehicle->export)."', '".slash($vehicle->consignee_name)."', '".slash($vehicle->s_charge)."', '".slash($vehicle->gov_tax)."', '".slash($vehicle->expanses)."', '".slash($vehicle->freight)."', '".slash($vehicle->yard_charge)."', '".slash($vehicle->insha_charge)."', '".slash($vehicle->total_price)."', '".slash($vehicle->total_price_np)."', '".slash($vehicle->status)."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
+					doquery( "insert into vehicle (title, make_id, model_id, year, stock_no, chassis_no, month, mileage, grade, condition_id, body_type_id, fuel_tank_id, transmission_id, engine_no, engine_cc, doors, seating, drive, drive_type, color_interior, color_exterior, options, fob_price, discount_price, cnf_price, auction_id, lot_number, auction_date, buy_by, buying_price, recycle_fees, auction_fees, other_fees, total_auction, total_with_tax, doc_paper, container_no, bl_no, bl_date, export, consignee_name, s_charge, gov_tax, expanses, freight, yard_charge, insha_charge, total_price, total_price_np, status, added_by) VALUES ( '".slash($vehicle->title)."', '".slash($vehicle->make_id)."', '".slash($vehicle->model_id)."', '".slash($vehicle->year)."', '".slash($vehicle->stock_no)."', '".slash($vehicle->chassis_no)."', '".slash($vehicle->month)."', '".slash($vehicle->mileage)."', '".slash($vehicle->grade)."', '".slash($vehicle->condition_id)."', '".slash($vehicle->body_type_id)."', '".slash($vehicle->fuel_tank_id)."', '".slash($vehicle->transmission_id)."', '".slash($vehicle->engine_no)."', '".slash($vehicle->engine_cc)."', '".slash($vehicle->doors)."', '".slash($vehicle->seating)."', '".slash($vehicle->drive)."', '".slash($vehicle->drive_type)."', '".slash($vehicle->color_interior)."', '".slash($vehicle->color_exterior)."', '".slash($vehicle->options)."', '".slash($vehicle->fob_price)."', '".slash($vehicle->discount_price)."', '".slash($vehicle->cnf_price)."', '".slash($vehicle->auction_id)."', '".slash($vehicle->lot_number)."', '".slash(date_dbconvert($vehicle->auction_date))."', '".slash($vehicle->buy_by)."', '".slash($vehicle->buying_price)."', '".slash($vehicle->recycle_fees)."', '".slash($vehicle->auction_fees)."', '".slash($vehicle->other_fees)."', '".slash($vehicle->total_auction)."', '".slash($vehicle->total_with_tax)."', '".slash($vehicle->doc_paper)."', '".slash($vehicle->container_no)."', '".slash($vehicle->bl_no)."', '".slash(date_dbconvert($vehicle->bl_date))."', '".slash($vehicle->export)."', '".slash($vehicle->consignee_name)."', '".slash($vehicle->s_charge)."', '".slash($vehicle->gov_tax)."', '".slash($vehicle->expanses)."', '".slash($vehicle->freight)."', '".slash($vehicle->yard_charge)."', '".slash($vehicle->insha_charge)."', '".slash($vehicle->total_price)."', '".slash($vehicle->total_price_np)."', '".slash($vehicle->status)."', '".$_SESSION[ "logged_in_admin" ][ "id" ]."')", $dblink );
 					$vehicle_id = inserted_id();
+					doquery( "insert into vehicle_2_branch ( vehicle_id, branch_id ) values( '".$vehicle_id."', '".$_SESSION[ "current_branch_id" ]."' )", $dblink );
 				}
 				$equipment_ids = array();
-				foreach( $vehicle->equipments as $equipment ) {	
-					if( $equipment->equipment_id ) {			
-						doquery( "insert into vehicle_2_equipment ( vehicle_id, equipment_id ) values( '".$vehicle_id."', '".$equipment->equipment_id."' )", $dblink );
-						$vehicle_id = inserted_id();
-						$equipment_ids[] = $equipment->equipment_id;
-					}
+				//doquery( "delete from vehicle_2_equipment where vehicle_id = '".$vehicle_id."'", $dblink );
 				
-				}
+					doquery( "insert into vehicle_2_equipment ( vehicle_id, equipment_id ) values( '".$vehicle_id."', '".$equipment."' )", $dblink );
+				
 				$response = array(
 					"status" => 1,
 					"id" => $vehicle_id

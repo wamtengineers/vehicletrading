@@ -16,16 +16,53 @@ else{
 
 switch($tab){
 	case 'add':
-		include("modules/auction/add_do.php");
+		$sortorder=dofetch(doquery("select count(id) from auction",$dblink));
+		$sortorder=$sortorder[0]+1;
+		doquery( "insert into auction(title, sortorder) values('', '".$sortorder."')", $dblink );
+		$id = inserted_id();
+			?>
+			<tr data-id="<?php echo $id?>">
+                <td class="text-center"><?php echo $sortorder;?></td>
+                <td class="text-center"><div class="checkbox margin-t-0 checkbox-primary">
+                    <input type="checkbox" name="id[]" id="<?php echo "rec_".$sortorder?>"  value="<?php echo $id?>" title="Select Record" />
+                    <label for="<?php echo "rec_".$sortorder?>"></label></div>
+                </td>
+                <td><input type="text" value="" name="title" class="record_field_sortable"/></td>
+                <td class="text-center">
+                    <a href="" class="save_record_sortable"><i class="fa fa-save"></i></a>
+                    <a href="auction_manage.php?id=<?php echo $id;?>&tab=status&s=0" class="change_status_sortable">
+                        <img src="images/offstatus.png" alt="Off" title="Set Status On">
+                    </a>
+                    <a onclick="" class="delete_record_sortable" href="auction_manage.php?id=<?php echo $id;?>&amp;tab=delete"><img title="Delete Record" alt="Delete" src="images/delete.png"></a>
+                </td>
+            </tr>
+		<?php
+		die;
 	break;
 	case 'edit':
-		include("modules/auction/edit_do.php");
+		extract( $_POST );
+		doquery( "update auction set title = '".$title."' where id = '".$id."'", $dblink );
+		die;
 	break;
 	case 'delete':
-		include("modules/auction/delete_do.php");
+		if(isset($_GET["id"]) && !empty($_GET["id"])){
+			doquery("delete from auction where id='".slash($_GET["id"])."'",$dblink);
+			die;
+		}
+		die;
 	break;
 	case 'status':
-		include("modules/auction/status_do.php");
+		if(isset($_GET["id"]) && !empty($_GET["id"])){
+			doquery("update auction set status='".slash($_GET["s"])."' where id='".slash($_GET["id"])."'",$dblink);
+			echo 'auction_manage.php?id='.slash($_GET["id"]).'&tab=status&s=';
+			if( $_GET[ "s" ] == 0 ) {
+				echo '1##<img src="images/offstatus.png" alt="Off" title="Set Status On">';
+			}
+			else{
+				echo '0##<img src="images/onstatus.png" alt="On" title="Set Status Off">';
+			}
+			die;
+		}
 	break;
 	case 'bulk_action':
 		include("modules/auction/bulkactions.php");
@@ -39,12 +76,6 @@ switch($tab){
             switch($tab){
                 case 'list':
                     include("modules/auction/list.php");
-                break;
-                case 'add':
-                    include("modules/auction/add.php");
-                break;
-                case 'edit':
-                    include("modules/auction/edit.php");
                 break;
             }
           ?>

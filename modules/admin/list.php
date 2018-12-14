@@ -2,8 +2,8 @@
 if(!defined("APP_START")) die("No Direct Access");
 $q="";
 $extra='';
-if( $_SESSION[ "logged_in_admin" ][ "branch_id" ] != 0 ) {
-	$extra=" and branch_id='".$_SESSION[ "logged_in_admin" ][ "branch_id" ]."'";
+if( $_SESSION[ "current_branch_id" ] != 0 ) {
+	$extra=" and branch_id='".$_SESSION[ "current_branch_id" ]."'";
 }
 $is_search=false;
 if(isset($_GET["q"])){
@@ -70,7 +70,8 @@ if($branch_id!=""){
                 <div class="col-sm-3 col-xs-8">
                   <input type="text" title="Enter String" value="<?php echo $q;?>" name="q" id="search" class="form-control" >  
                 </div>
-                <div class="col-sm-1 col-xs-2">
+                <div class="col-sm-2 col-xs-2">
+                	<input type="button" class="btn btn-danger btn-l reset_search" value="Reset" alt="Reset Record" title="Reset Record" />
                     <input type="submit" class="btn btn-default btn-l" value="Search" alt="Search Record" title="Search Record" />
                 </div>
           	</form>

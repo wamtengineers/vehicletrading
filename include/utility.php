@@ -1322,7 +1322,27 @@ function get_category_name( $cat_id ){
 function curr_round($amount){
 	return round( $amount, 0);
 }
-
+function image_editor( $id, $img_src, $url, $extra_fields = array() ) {
+	?>
+	<div id="<?php echo $id?>-popup" style="display:none">
+		<div class="image-editor" data-src="<?php echo $img_src?>" data-field="<?php echo $id?>_raw" data-img="<?php echo $id?>_img" data-url="<?php echo $url?>" data-extra_fields='<?php echo json_encode( (object) $extra_fields  )?>'>
+			<input type="file" class="cropit-image-input" name="<?php echo $id?>" id="<?php echo $id?>" accept="image/*" capture="camera">
+			<div class="cropit-preview"></div>
+				<div class="image-size-label">
+					Resize image
+				</div>
+				<input type="range" class="cropit-image-zoom-input">
+			  
+				<button class="rotate-ccw">Rotate <i class="fa fa-undo"></i></button>
+				<button class="rotate-cw">Rotate <i class="fa fa-repeat"></i></button>
+				<button class="image-editor-done">Done</button>
+			</div>
+	</div>
+	<a class="image-editor-src fancybox inline" href="#<?php echo $id?>-popup">
+		<img src="<?php echo $img_src?>" id="<?php echo $id?>_img" />
+	</a>
+	<?php
+}
 function get_account_balance( $account_id, $datetime = "" ){
 	global $dblink;
 	if( empty( $datetime ) ) {
@@ -1330,7 +1350,7 @@ function get_account_balance( $account_id, $datetime = "" ){
 	}
 	$account = dofetch( doquery( "select balance from account where id='".$account_id."'", $dblink ) );
 	$balance = $account[ "balance" ];
-	$balance_transactions = dofetch( doquery( "select sum(amount) as balance from (SELECT id, amount as amount FROM `transaction` a where a.account_id='".$account_id."' and datetime_added<='".$datetime."' union select id, -amount from transaction b where b.reference_id='".$account_id."' and datetime_added<='".$datetime."') as transactions", $dblink ) );
+	$balance_transactions = dofetch( doquery( "select sum(amount) as balance from (SELECT a.id, c.symbol as currency_symbol, amount as amount FROM `transaction` a left join currency c on a.currency_id = c.id where a.account_id='".$account_id."' and datetime_added<='".$datetime."' union select b.id, d.symbol as currency_symbol, -amount from transaction b left join currency d on b.currency_id = d.id where b.reference_id='".$account_id."' and datetime_added<='".$datetime."') as transactions", $dblink ) );
 	$balance = $balance + $balance_transactions[ "balance" ];
 	$expense = dofetch( doquery( "select a.*, b.symbol, sum(amount) as total from expense a left join currency b on a.currency_id = b.id where a.status=1 and account_id = '".$account_id."' and datetime_added<='".$datetime."'", $dblink ) );
 	$balance -= $expense[ "total" ];

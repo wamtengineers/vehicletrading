@@ -4506,6 +4506,7 @@ td {
     width: auto;
 	display: inline-block;
 	height: 34px;
+	vertical-align: top;
 }
 .btn.btn-default.btn-l {
     height: 30px;
@@ -5214,6 +5215,26 @@ h4.form-label{
 	border-radius: 39px;
 	font-size: 12px;
 	color:#fff;
+}
+.manage_sortable button{
+	background: none;
+    font-size: 24px;
+    border: none;
+    line-height: normal;
+    vertical-align: middle;
+	padding: 0;
+	outline: none;
+}
+.manage_sortable a{
+	padding-right:10px;
+}
+.manage_sortable .fa{
+	color:#761539;
+	font-size: 18px;
+    vertical-align: middle;
+}
+.manage_sortable .fa:hover{
+	color: hsl(10, 90%, 30%);
 }
 @media (max-width: 767px) {
 .form-group .control-label {
